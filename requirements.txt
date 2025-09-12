@@ -1,0 +1,29 @@
+# GUI
+PySide6>=6.5
+
+# Core ML stack (PyTorch + Audio + Whisper)
+torch>=2.0
+torchaudio>=2.0
+openai-whisper>=20231117
+
+# CUDA (NVIDIA GPU, Windows/Linux)
+# These wheels are hosted separately by PyTorch, but adding them here helps auto-resolution
+nvidia-pyindex
+nvidia-pip
+nvidia-pip-cu11
+nvidia-pip-cu12
+
+# macOS GPU (Metal Performance Shaders - MPS)
+torchvision>=0.15
+# NOTE: On macOS, PyTorch automatically enables MPS if available (no extra packages required).
+# Including torchvision ensures compatibility with Mac builds.
+
+# AI text processing (OpenAI API)
+openai>=1.0
+
+# Utilities
+tqdm>=4.65
+requests>=2.31
+
+# Export (TXT/PDF)
+reportlab>=4.0

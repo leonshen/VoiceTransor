@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environments
+venv/
+.venv/
+env/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.spec
+
+# IDE/Editor
+.idea/
+.vscode/
+
+# Local data cache
+data/cache/
+
+
+# added by sl 2005/08/29
+# test data
+/data/test/
+
+# dev docs
+/docs/*.docx
+

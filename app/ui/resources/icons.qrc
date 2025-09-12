@@ -1,0 +1,12 @@
+<RCC>
+  <qresource prefix="/icons">
+    <file alias="vt2-import-audio.svg">../../assets/icons/vt2-import-audio.svg</file>
+    <file alias="vt2-transcribe.svg">../../assets/icons/vt2-transcribe.svg</file>
+    <file alias="vt2-cancel-transcribe.svg">../../assets/icons/vt2-cancel-transcribe.svg</file>
+    <file alias="vt2-ai-text.svg">../../assets/icons/vt2-ai-text.svg</file>
+    <file alias="vt2-save-transcript-txt.svg">../../assets/icons/vt2-save-transcript-txt.svg</file>
+    <file alias="vt2-export-pdf.svg">../../assets/icons/vt2-export-pdf.svg</file>
+    <file alias="vt2-save-result-txt.svg">../../assets/icons/vt2-save-result-txt.svg</file>
+    <file alias="vt2-app-icon.svg">../../assets/icons/vt2-app-icon.svg</file>
+  </qresource>
+</RCC>

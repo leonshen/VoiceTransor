@@ -1,0 +1,86 @@
+[project]
+name = "voicetransor"
+dynamic = ["version"]
+description = "VoiceTransor: Speech-to-text, AI-powered text processing, export results as TXT/PDF."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Long", email = "voicetransor@gmail.com" }]
+keywords = ["whisper", "speech-to-text", "transcription", "PySide6", "OpenAI", "PDF", "audio"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Environment :: GUI",
+    "Topic :: Multimedia :: Sound/Audio :: Speech"
+]
+
+# Minimal runtime dependencies (for basic installation via pip install)
+# Heavy dependencies (torch/CUDA/MPS) remain in requirements.txt or optional extras
+dependencies = [
+    "PySide6>=6.5",
+    "openai>=1.0",
+    "openai-whisper>=20231117",
+    "tqdm>=4.65",
+    "requests>=2.31",
+    "reportlab>=4.0"
+]
+
+[project.optional-dependencies]
+# Full environment (install with pip install .[full])
+full = [
+    "torch>=2.0",
+    "torchaudio>=2.0",
+    "torchvision>=0.15",
+    # NVIDIA CUDA runtime (will be ignored on macOS)
+    "nvidia-pyindex; platform_system != 'Darwin'",
+    "nvidia-pip; platform_system != 'Darwin'",
+    "nvidia-pip-cu11; platform_system != 'Darwin'",
+    "nvidia-pip-cu12; platform_system != 'Darwin'"
+]
+
+# Entry points (allow launching after installation)
+[project.scripts]
+voicetransor = "app.main:main"
+
+# GUI entry point for Windows (runs without console window)
+[project.gui-scripts]
+voicetransor-gui = "app.main:main"
+
+[project.urls]
+Homepage = "https://github.com/leonshen/VoiceTransor"
+Repository = "https://github.com/leonshen/VoiceTransor"
+Issues = "https://github.com/leonshen/VoiceTransor/issues"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = { attr = "app._version.__version__" }
+
+# Auto-discover packages
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+# Include additional resources (icons, translations, styles, configs, docs)
+[tool.setuptools.package-data]
+"app" = [
+  "**/*.qm",
+  "**/*.png",
+  "**/*.ico",
+  "**/*.svg",
+  "**/*.qss",
+  "**/*.json",
+  "**/*.txt",
+  "**/*.md",
+  "resources/**/*"
+]
+
+# Include non-Python files in the distribution
+[tool.setuptools]
+include-package-data = true
