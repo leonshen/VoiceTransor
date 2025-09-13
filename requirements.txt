@@ -8,10 +8,6 @@ openai-whisper>=20231117
 
 # CUDA (NVIDIA GPU, Windows/Linux)
 # These wheels are hosted separately by PyTorch, but adding them here helps auto-resolution
-nvidia-pyindex
-nvidia-pip
-nvidia-pip-cu11
-nvidia-pip-cu12
 
 # macOS GPU (Metal Performance Shaders - MPS)
 torchvision>=0.15
@@ -27,3 +23,7 @@ requests>=2.31
 
 # Export (TXT/PDF)
 reportlab>=4.0
+
+# not in above
+pydub>=0.25.1
+psutil>=7.0.0

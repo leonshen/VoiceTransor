@@ -29,3 +29,6 @@ data/cache/
 # dev docs
 /docs/*.docx
 
+# macOS system files
+.DS_Store
+*/.DS_Store
