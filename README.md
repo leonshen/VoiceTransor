@@ -36,6 +36,24 @@ cd VoiceTransor
 pip install -r requirements.txt
 ```
 
+### Windows GPU (CUDA) setup
+If you want Whisper to use an NVIDIA GPU on Windows:
+
+1. Uninstall any existing CPU-only PyTorch wheels inside your virtualenv:
+   ```bash
+   pip uninstall torch torchvision torchaudio -y
+   ```
+2. Install the matching CUDA wheels (examples below use CUDA 12.1; pick the build that matches your driver):
+   ```bash
+   pip install torch==2.3.0+cu121 torchvision==0.18.0+cu121 torchaudio==2.3.0+cu121 \
+       --index-url https://download.pytorch.org/whl/cu121
+   ```
+3. Verify CUDA is detected before launching VoiceTransor:
+   ```bash
+   python -c "import torch; print(torch.cuda.is_available(), torch.version.cuda)"
+   ```
+   The command should print `True` and a CUDA version string.
+
 ## Run
 Make sure the virtual environment is activated
 ```bash

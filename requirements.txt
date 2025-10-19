@@ -24,6 +24,9 @@ requests>=2.31
 # Export (TXT/PDF)
 reportlab>=4.0
 
+# NumPy constraint (torch Windows wheels still require 1.x API)
+numpy>=1.24,<2.0
+
 # not in above
 pydub>=0.25.1
 psutil>=7.0.0
