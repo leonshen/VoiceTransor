@@ -1170,6 +1170,26 @@ class VoiceTransorMainWindow(QMainWindow):
     # Slots / Handlers
     # -----------
     def on_import_audio(self) -> None:
+        # Check if a task is running and ask user whether to stop it
+        if len(self._active_tasks) > 0:
+            reply = QMessageBox.question(
+                self,
+                self.tr("Warning"),
+                self.tr("A task is running. Do you want to stop it and load new audio?"),
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No
+            )
+            if reply == QMessageBox.Yes:
+                # Stop current task
+                if self._stop_flag is not None:
+                    self._stop_flag.set()
+                # Wait for task to finish (max 3 seconds)
+                self.pool.waitForDone(3000)
+                # Clear task list
+                self._active_tasks.clear()
+            else:
+                return
+
         filters = self.tr("Audio files (*.wav *.mp3 *.m4a *.flac *.ogg *.aac);;All files (*.*)")
         file_path, _ = QFileDialog.getOpenFileName(self, self.tr("Select Audio File"), self.last_dir, filters)
         if not file_path:
@@ -1206,6 +1226,15 @@ class VoiceTransorMainWindow(QMainWindow):
     def on_transcribe(self) -> None:
         if not self.current_audio_path:
             QMessageBox.information(self, self.tr("Info"), self.tr("Please import an audio file first."))
+            return
+
+        # Check if a transcription task is already running
+        if len(self._active_tasks) > 0:
+            QMessageBox.warning(
+                self,
+                self.tr("Busy"),
+                self.tr("A transcription task is already running. Please wait for it to complete.")
+            )
             return
 
         dlg = TranscribeOptionsDialog(
@@ -1702,8 +1731,8 @@ class VoiceTransorMainWindow(QMainWindow):
 
         # Prevent new tasks, clear queue, and wait a bit for workers to finish
         try:
-            self.thread_pool.clear()
-            self.thread_pool.waitForDone(5000)  # 5s grace; adjust if you like
+            self.pool.clear()
+            self.pool.waitForDone(5000)  # 5s grace; adjust if you like
         except Exception:
             pass
 
