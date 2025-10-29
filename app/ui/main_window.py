@@ -975,15 +975,26 @@ class VoiceTransorMainWindow(QMainWindow):
 
         @safe
         def on_finished():
+            # CRITICAL: Only process finish if this task is still active
+            # This prevents delayed signals from old tasks interfering with new ones
+            if runnable not in self._active_tasks:
+                log.warning("Received finished signal from non-active task, ignoring")
+                return
+
             try:
                 self._active_tasks.remove(runnable)
             except ValueError:
                 pass
-            self._disable_actions_for_task(False)
-            self._show_progress(False)
-            self.act_cancel.setEnabled(False)
-            self._stop_flag = None
-            self.lbl_status.setText("")
+
+            # Only reset UI if no other tasks are running
+            if len(self._active_tasks) == 0:
+                self._disable_actions_for_task(False)
+                self._show_progress(False)
+                self.act_cancel.setEnabled(False)
+                self._stop_flag = None
+                self.lbl_status.setText("")
+            else:
+                log.debug(f"Other tasks still running ({len(self._active_tasks)}), keeping UI state")
 
         # Wire signals
         signals.started.connect(on_started)
@@ -1297,6 +1308,39 @@ class VoiceTransorMainWindow(QMainWindow):
         self.act_cancel.setEnabled(True)
         self._show_progress(True)
 
+        # CRITICAL: Process all pending Qt events before starting new transcription
+        # This ensures any delayed signals from previous transcription are handled
+        from PySide6.QtCore import QCoreApplication
+        QCoreApplication.processEvents()
+
+        # CRITICAL: Force GPU cleanup before starting new transcription
+        try:
+            import torch
+            import gc
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+                torch.cuda.synchronize()
+                gc.collect()
+                log.debug("GPU memory cleared before new transcription")
+        except Exception as e:
+            log.warning(f"Failed to clear GPU memory: {e}")
+
+        # AGGRESSIVE RESET: Clear text box and reset internal document
+        try:
+            from PySide6.QtGui import QTextDocument
+            self.txt_transcript.clear()
+            # Create a new document to ensure clean state
+            new_doc = QTextDocument()
+            self.txt_transcript.setDocument(new_doc)
+            log.debug("Text box document reset for new transcription")
+        except Exception as e:
+            log.warning(f"Failed to reset text document: {e}")
+            # Fallback to simple clear
+            self.txt_transcript.clear()
+            self.txt_transcript.setPlainText("")
+
+        QCoreApplication.processEvents()  # Process clear events
+
         signals = self._run_task(
             transcribe_chunked,
             audio_path=self.current_audio_path,
@@ -1308,10 +1352,7 @@ class VoiceTransorMainWindow(QMainWindow):
             resume=True,
         )
 
-        # clear textedit of transcript
-        self.txt_transcript.clear()
-
-        # connect to text appending
+        # Connect signals immediately after _run_task but before task actually runs
         signals.partial_text.connect(self._on_partial_transcript)
         signals.bootstrap_text.connect(self._on_bootstrap_transcript)
 
@@ -1352,15 +1393,17 @@ class VoiceTransorMainWindow(QMainWindow):
     def _on_partial_transcript(self, text: str) -> None:
         """Append new chunk text to transcript in real time."""
         try:
-            # append text（appendPlainText will add '\n'）
-            self.txt_transcript.appendPlainText(text)
-        except Exception:
-            # otherwise
-            log.info(Exception)
-            cur = self.txt_transcript.textCursor()
-            cur.movePosition(cur.End)
-            cur.insertText(text + ("\n" if not text.endswith("\n") else ""))
-            self.txt_transcript.setTextCursor(cur)
+            # Use insertPlainText instead of appendPlainText for better stability
+            from PySide6.QtGui import QTextCursor
+            cursor = self.txt_transcript.textCursor()
+            cursor.movePosition(QTextCursor.End)
+            cursor.insertText(text)
+            cursor.insertText("\n")
+            self.txt_transcript.setTextCursor(cursor)
+            # Ensure the update is processed
+            self.txt_transcript.ensureCursorVisible()
+        except Exception as e:
+            log.error(f"Failed to append transcript text: {e}")
 
     def on_cancel_transcription(self) -> None:
         if self._stop_flag is not None:

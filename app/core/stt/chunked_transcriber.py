@@ -347,6 +347,9 @@ def transcribe_chunked(
             )
         except Exception as e:
             raise RuntimeError(f"Transcription failed at {start_s:.2f}s: {e}") from e
+        finally:
+            # Release chunk audio immediately after transcription
+            del chunk_audio
 
         # accumulate + stream to UI
         segs = res.get("segments") or []
@@ -386,6 +389,14 @@ def transcribe_chunked(
         _emit_safe(signals, "progress", percent, done_until, total, eta)
         _emit_safe(signals, "message", f"Processed chunk {i+1}/{len(bounds)} ({chunk_len:.1f}s)")
 
+        # Clean GPU cache after each chunk to prevent memory accumulation
+        if device == "cuda" and (i + 1) % 2 == 0:  # Every 2 chunks
+            try:
+                import torch
+                torch.cuda.empty_cache()
+            except Exception:
+                pass
+
         # inter-chunk cooldown (base; thermal path may have waited already)
         time.sleep(0.2)
 
@@ -397,6 +408,24 @@ def transcribe_chunked(
 
     log.debug("final_text")
     log.debug(final_text)
+
+    # --- Cleanup: Release GPU memory and audio data ---
+    try:
+        # Delete audio numpy array to free memory
+        del audio_np
+
+        # Force GPU memory cleanup if using CUDA
+        if device == "cuda":
+            import torch
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize()
+            log.debug("GPU memory released after transcription")
+
+        # Force garbage collection
+        gc.collect()
+    except Exception as e:
+        log.warning(f"Failed to cleanup resources: {e}")
+
     return final_text
 
 
