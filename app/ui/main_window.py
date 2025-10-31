@@ -7,9 +7,14 @@ Layout:
     - Central (right): transcript + result (vertical splitter).
 
 Features:
-    - Import → Transcribe (Whisper, local) → Text operations (OpenAI) → Export (TXT/PDF).
+    - Import → Transcribe (Whisper, local) → Text operations  → Export (TXT/PDF).
     - Thread pool with safe lifetime management to avoid random crashes.
     - i18n: Language menu (System/English/简体中文) with live retranslation.
+
+Text Operations:
+    - Uses Ollama for local LLM text processing (privacy-focused, offline).
+    - OpenAI integration code is preserved for developer extensibility but hidden from end users.
+    - The OpenAI Settings menu item is commented out in the UI (see lines ~373, ~887, ~1735).
 """
 from __future__ import annotations
 from pathlib import Path
@@ -370,7 +375,8 @@ class VoiceTransorMainWindow(QMainWindow):
         self.menu_tools.addAction(self.act_transcribe)
         self.menu_tools.addAction(self.act_textops)
         self.menu_tools.addSeparator()
-        self.menu_tools.addAction(self.act_openai_settings)
+        # OpenAI Settings menu item hidden from end users (code preserved for developer extensibility)
+        # self.menu_tools.addAction(self.act_openai_settings)
 
         self.menu_view.addAction(self.act_show_info_dock)
         self.menu_view.addAction(self.act_show_prompt_dock)
@@ -856,6 +862,14 @@ class VoiceTransorMainWindow(QMainWindow):
             padding: 6px;
         }
         QToolBar { spacing: 6px; }
+        QDockWidget::title {
+            text-align: left;
+            padding-left: 8px;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            font-size: 8pt;
+            min-height: 20px;
+        }
         """)
 
     # -----------
@@ -881,10 +895,10 @@ class VoiceTransorMainWindow(QMainWindow):
 
     def _disable_actions_for_task(self, busy: bool) -> None:
         for act in [
-            self.act_import, self.act_transcribe, # self.act_play_pause, 
+            self.act_import, self.act_transcribe, # self.act_play_pause,
             self.act_save_txt, self.act_textops, self.act_export_pdf,
             self.act_save_result_as_txt,
-            self.act_openai_settings
+            # self.act_openai_settings  # Hidden from end users
         ]:
             act.setEnabled(not busy)
 
@@ -1135,6 +1149,10 @@ class VoiceTransorMainWindow(QMainWindow):
         if save:
             self.settings.setValue("ui/theme", theme)
 
+        # Apply light theme QSS for dock widget titles
+        if theme != "dark":
+            self._apply_light_qss()
+
         self._apply_zoom() # ensure zoom ok after change theme
         self._set_icons()
 
@@ -1325,19 +1343,13 @@ class VoiceTransorMainWindow(QMainWindow):
         except Exception as e:
             log.warning(f"Failed to clear GPU memory: {e}")
 
-        # AGGRESSIVE RESET: Clear text box and reset internal document
+        # AGGRESSIVE RESET: Clear text box completely
         try:
-            from PySide6.QtGui import QTextDocument
-            self.txt_transcript.clear()
-            # Create a new document to ensure clean state
-            new_doc = QTextDocument()
-            self.txt_transcript.setDocument(new_doc)
-            log.debug("Text box document reset for new transcription")
-        except Exception as e:
-            log.warning(f"Failed to reset text document: {e}")
-            # Fallback to simple clear
             self.txt_transcript.clear()
             self.txt_transcript.setPlainText("")
+            log.debug("Text box cleared for new transcription")
+        except Exception as e:
+            log.warning(f"Failed to clear text box: {e}")
 
         QCoreApplication.processEvents()  # Process clear events
 
@@ -1451,32 +1463,58 @@ class VoiceTransorMainWindow(QMainWindow):
         if not src:
             QMessageBox.information(self, self.tr("Info"), self.tr("Please transcribe or paste text first."))
             return
-        
+
         # User instruction
         user_prompt = self.txt_prompt.toPlainText().strip()
         if not user_prompt:
             # fall back to classic summarize if empty
             user_prompt = "Summarize the source text into clear, concise bullet points."
 
-        # OpenAI settings
-        model = self.settings.value("openai/model", "gpt-4o-mini")
-        api_key = self.settings.value("openai/api_key", "")
-        project = self.settings.value("openai/project", "")
+        # Show options dialog for LLM model selection
+        from app.ui.options_dialogs import TextOpsOptionsDialog
+        current_model = self.settings.value("ollama/model", "llama3.1:8b")
+        base_url = self.settings.value("ollama/base_url", "http://localhost:11434")
+
+        dlg = TextOpsOptionsDialog(self, current_model, base_url)
+        if dlg.exec() != QDialog.Accepted:
+            return  # User canceled
+
+        # Get selected model from dialog
+        llm_model = dlg.values()
+        if not llm_model:
+            llm_model = "llama3.1:8b"
+
+        # Save model selection
+        self.settings.setValue("ollama/model", llm_model)
+
+        # Double-check Ollama availability (in case it stopped after dialog opened)
+        from app.core.ai.ollama_textops import check_ollama_available
+        is_available, status_msg = check_ollama_available(base_url)
+        if not is_available:
+            QMessageBox.critical(
+                self,
+                self.tr("Ollama Not Available"),
+                self.tr(
+                    "Ollama service is not running.\n\n"
+                    "{status}\n\n"
+                    "Please ensure Ollama is started before running text operations."
+                ).format(status=status_msg)
+            )
+            return
 
         # UI state
         self._stop_flag = threading.Event()
         self._show_progress(True)
         self.act_cancel.setEnabled(True)
 
-        # background task
-        from app.core.ai.openai_textops import run_text_op
+        # background task - use Ollama
+        from app.core.ai.ollama_textops import run_text_op
         signals = self._run_task(
             run_text_op,
             transcript=src,
             prompt=user_prompt,
-            model=model,
-            api_key=api_key,
-            project=project,
+            model=llm_model,
+            base_url=self.settings.value("ollama/base_url", "http://localhost:11434"),
         )
 
         def _on_ok(res):
@@ -1497,7 +1535,7 @@ class VoiceTransorMainWindow(QMainWindow):
             self.statusBar().showMessage(self.tr("Text operation completed."), 5000)
 
         def _on_err(msg):
-            self._show_error(msg)
+            QMessageBox.critical(self, self.tr("Error"), str(msg))
 
         def _on_fin():
             self._show_progress(False)
@@ -1621,7 +1659,7 @@ class VoiceTransorMainWindow(QMainWindow):
                 "Features:\n"
                 "- Import audio files\n"
                 "- Local transcription (Whisper, with resume support)\n"
-                "- AI-powered text processing (OpenAI)\n"
+                "- AI-powered text processing \n"
                 "- Export results (TXT / PDF)\n\n"
                 "Supported Platforms: Windows, macOS"
             ).format(version=self.version),
@@ -1712,7 +1750,7 @@ class VoiceTransorMainWindow(QMainWindow):
         self.act_textops.setText(self.tr("Run Text Operation"))
         self.act_export_pdf.setText(self.tr("Export result as PDF…"))
         self.act_save_result_as_txt.setText(self.tr("Save Result as TXT…"))
-        self.act_openai_settings.setText(self.tr("OpenAI Settings…"))
+        # self.act_openai_settings.setText(self.tr("OpenAI Settings…"))  # Hidden from end users
         self.act_about.setText(self.tr("About VoiceTransor"))
         self.act_contact.setText(self.tr("Contact"))
         self.act_exit.setText(self.tr("Exit"))

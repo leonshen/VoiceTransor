@@ -35,9 +35,9 @@ class _ModelManager:
             # raise RuntimeError("__MODEL_CANNOT_BE_LOADED_MORE_THAN_1TIME__")
 
 
-        # 切换前安全卸载, does not work
+        # Safely unload before switching (does not work)
         self._unload()
-        # 再加载新模型
+        # Then load new model
         import whisper  # type: ignore
         self._model = whisper.load_model(name, device=device, download_root=str(models_dir))
         self._key = key
@@ -48,22 +48,22 @@ class _ModelManager:
             return
         try:
             import torch
-            # 先尽量把参数迁回 CPU（释放 VRAM 占用）
+            # First migrate parameters back to CPU (release VRAM)
             try:
                 self._model.to("cpu")
             except Exception:
                 pass
-            # 断引用
+            # Break reference
             m = self._model
             self._model = None
             self._key = None
             del m
-            # 同步+清空 CUDA allocator
+            # Synchronize and clear CUDA allocator
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
                 torch.cuda.empty_cache()
         except Exception:
-            # 忽略清理异常
+            # Ignore cleanup exceptions
             self._model = None
             self._key = None
         finally:

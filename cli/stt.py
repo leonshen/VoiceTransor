@@ -5,7 +5,7 @@ import os
 import sys
 from pathlib import Path
 
-import torch  # pip install torch  (按环境装 CPU/GPU 版)
+import torch  # pip install torch (CPU or GPU version depending on environment)
 import whisper  # pip install openai-whisper
 
 
@@ -18,7 +18,7 @@ def default_models_dir() -> Path:
     local = os.getenv("LOCALAPPDATA")
     if local:
         return Path(local) / "VoiceTransor" / "models" / "whisper"
-    # 其它平台回退
+    # Fallback for other platforms
     home = Path.home()
     return home / ".cache" / "VoiceTransor" / "models" / "whisper"
 
@@ -37,21 +37,21 @@ def default_out_path(input_path: Path) -> Path:
 
 
 def main():
-    ap = argparse.ArgumentParser(description="本地 Whisper 转录为纯文本（无时间戳）")
-    ap.add_argument("-i", "--input", required=True, help="音频文件路径")
-    ap.add_argument("-l", "--lang", default=None, help="目标语言代码（例如 zh, en；留空自动检测）")
+    ap = argparse.ArgumentParser(description="Local Whisper transcription to plain text (no timestamps)")
+    ap.add_argument("-i", "--input", required=True, help="Audio file path")
+    ap.add_argument("-l", "--lang", default=None, help="Target language code (e.g., zh, en; leave empty for auto-detect)")
     ap.add_argument("-m", "--model", default="base", choices=["tiny", "base", "small"],
-                    help="Whisper 模型（默认 base）")
+                    help="Whisper model (default: base)")
     ap.add_argument("--models-dir", default=str(default_models_dir()),
-                    help="模型缓存目录（默认：本地应用数据目录）")
+                    help="Model cache directory (default: local app data directory)")
     ap.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"],
-                    help="计算设备（默认 auto）")
-    ap.add_argument("-o", "--output", default=None, help="转录结果保存路径（.txt）")
+                    help="Compute device (default: auto)")
+    ap.add_argument("-o", "--output", default=None, help="Transcript output file path (.txt)")
     args = ap.parse_args()
 
     in_path = Path(args.input)
     if not in_path.exists():
-        print(f"文件不存在：{in_path}", file=sys.stderr)
+        print(f"File does not exist: {in_path}", file=sys.stderr)
         sys.exit(1)
 
     out_path = Path(args.output) if args.output else default_out_path(in_path)
@@ -63,18 +63,18 @@ def main():
     device = pick_device(args.device)
     fp16 = device == "cuda"
 
-    print(f"[Whisper] 模型: {args.model} | 设备: {device} | 模型目录: {models_dir}")
+    print(f"[Whisper] Model: {args.model} | Device: {device} | Models dir: {models_dir}")
     try:
         model = whisper.load_model(args.model, device=device, download_root=str(models_dir))
     except Exception as e:
-        print(f"加载/下载模型失败：{e}", file=sys.stderr)
+        print(f"Failed to load/download model: {e}", file=sys.stderr)
         sys.exit(2)
 
-    # 转录
+    # Transcribe
     try:
         result = model.transcribe(str(in_path), language=args.lang, task="transcribe", fp16=fp16, verbose=False)
     except Exception as e:
-        print(f"转录失败：{e}", file=sys.stderr)
+        print(f"Transcription failed: {e}", file=sys.stderr)
         sys.exit(3)
 
     text = (result.get("text") or "").strip()
@@ -82,10 +82,10 @@ def main():
     try:
         out_path.write_text(text, encoding="utf-8")
     except Exception as e:
-        print(f"写入文件失败：{out_path} | {e}", file=sys.stderr)
+        print(f"Failed to write file: {out_path} | {e}", file=sys.stderr)
         sys.exit(4)
 
-    print(f"转录完成：{out_path}")
+    print(f"Transcription completed: {out_path}")
 
 
 if __name__ == "__main__":

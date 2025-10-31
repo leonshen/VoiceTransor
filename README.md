@@ -6,30 +6,47 @@ It provides a simple workflow to transcribe audio locally using Whisper, process
 ---
 
 ## ✨ Features
+
 - Import audio files
 - Local transcription with Whisper (supports resume from interruption)
-- AI-powered text processing (OpenAI integration)
+- AI-powered text processing
 - Export results as TXT / PDF
-- Cross-platform: Windows, macOS 
+- Cross-platform: Windows, macOS
 
 ---
 
 ## 🚀 Installation
 
 ### Prerequisites
+
 - Python 3.10+
 - FFmpeg installed and available in PATH
 - Virtual environment (recommended)
 
-### Configure OpenAI API
-Some features (AI-powered text processing) require an OpenAI API key and a project ID.  
+### Configure AI Text Processing
 
-1. Create an account at [OpenAI](https://platform.openai.com/).  
-2. Generate an API key from the [API Keys page](https://platform.openai.com/account/api-keys).  
-3. At the same time, create a **Project** in your OpenAI account — most API keys now need to be associated with a project.  
-4. In VoiceTransor, open **Settings → OpenAI** and enter your **API Key** and **Project ID**.
+VoiceTransor uses **Ollama** for local AI-powered text processing. This keeps your data completely private without sending it to the cloud.
+
+**Quick Setup:**
+
+1. **Windows:** Run `install_ollama.bat` in the project directory (automatic installation)
+2. **Manual installation:** Download from [ollama.com/download](https://ollama.com/download)
+3. **Start service:** Run `ollama serve` in a terminal
+4. **Download a model:** Run `ollama pull llama3.1:8b`
+
+For detailed setup instructions, see [OLLAMA_SETUP_GUIDE.md](docs/OLLAMA_SETUP_GUIDE.md) ([中文版](docs/OLLAMA_SETUP_GUIDE_CN.md)).
+
+**Recommended Models:**
+- `llama3.1:8b` - English (default, ~4.7GB)
+- `qwen2.5:7b` - Balanced Chinese/English (~4.4GB)
+- `gemma2:9b` - High quality (~5.4GB)
+
+**System Requirements:**
+- **GPU mode:** NVIDIA GPU with 8GB+ VRAM (recommended)
+- **CPU mode:** 16GB+ RAM (slower but works)
 
 ### Setup
+
 ```bash
 git clone https://github.com/leonshen/VoiceTransor.git
 cd VoiceTransor
@@ -37,6 +54,7 @@ pip install -r requirements.txt
 ```
 
 ### Windows GPU (CUDA) setup
+
 If you want Whisper to use an NVIDIA GPU on Windows:
 
 1. Uninstall any existing CPU-only PyTorch wheels inside your virtualenv:
@@ -55,13 +73,17 @@ If you want Whisper to use an NVIDIA GPU on Windows:
    The command should print `True` and a CUDA version string.
 
 ## Run
+
 Make sure the virtual environment is activated
+
 ```bash
 python -m app.main
 ```
 
 ## 📧 Contact
+
 For support or collaboration: voicetransor@gmail.com
 
 ## 📜 License
+
 MIT License. See [LICENSE](LICENSE) for details.

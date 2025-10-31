@@ -29,7 +29,7 @@ def build_doc(output_pdf: Path, title: str, body_text: str, font_name: str | Non
     story.append(Paragraph(title, title_style))
     story.append(Spacer(1, 8 * mm))
 
-    # 将换行转为 <br/> 以便 Paragraph 正确换行
+    # Convert line breaks to <br/> for proper Paragraph rendering
     safe_text = body_text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     safe_text = safe_text.replace("\n", "<br/>")
     story.append(Paragraph(safe_text, body_style))
@@ -41,34 +41,34 @@ def build_doc(output_pdf: Path, title: str, body_text: str, font_name: str | Non
 
 
 def main():
-    ap = argparse.ArgumentParser(description="将摘要文本导出为 PDF（离线）")
-    ap.add_argument("-i", "--input", required=True, help="摘要文本文件路径")
-    ap.add_argument("-o", "--output", default=None, help="PDF 输出路径（可选）")
-    ap.add_argument("--title", default="VoiceTransor Summary", help="PDF 标题")
-    ap.add_argument("--font", default=None, help="可选：TTF 字体路径（用于中文等 CJK 文本显示）")
+    ap = argparse.ArgumentParser(description="Export summary text to PDF (offline)")
+    ap.add_argument("-i", "--input", required=True, help="Summary text file path")
+    ap.add_argument("-o", "--output", default=None, help="PDF output path (optional)")
+    ap.add_argument("--title", default="VoiceTransor Summary", help="PDF title")
+    ap.add_argument("--font", default=None, help="Optional: TTF font path (for CJK text display)")
     args = ap.parse_args()
 
     in_path = Path(args.input)
     if not in_path.exists():
-        print(f"文件不存在：{in_path}")
+        print(f"File does not exist: {in_path}")
         raise SystemExit(1)
 
     out_pdf = Path(args.output) if args.output else default_out_path(in_path)
     out_pdf.parent.mkdir(parents=True, exist_ok=True)
 
-    # 如提供 TTF 字体，则注册后使用
+    # If TTF font is provided, register and use it
     font_name = None
     if args.font:
         font_path = Path(args.font)
         if not font_path.exists():
-            print(f"字体文件不存在：{font_path}")
+            print(f"Font file does not exist: {font_path}")
             raise SystemExit(2)
         font_name = "VoiceTransorFont"
         pdfmetrics.registerFont(TTFont(font_name, str(font_path)))
 
     text = in_path.read_text(encoding="utf-8")
     build_doc(out_pdf, args.title, text, font_name=font_name)
-    print(f"PDF 已生成：{out_pdf}")
+    print(f"PDF generated: {out_pdf}")
 
 
 if __name__ == "__main__":

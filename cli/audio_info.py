@@ -18,27 +18,27 @@ def ffprobe_info(input_path: Path) -> dict:
     try:
         res = subprocess.run(cmd, capture_output=True, text=True, check=True)
     except FileNotFoundError:
-        print("错误：未找到 ffprobe。请安装 FFmpeg 并将其添加到 PATH。", file=sys.stderr)
+        print("Error: ffprobe not found. Please install FFmpeg and add it to PATH.", file=sys.stderr)
         sys.exit(2)
     except subprocess.CalledProcessError as e:
-        print(f"ffprobe 调用失败：{e.stderr}", file=sys.stderr)
+        print(f"ffprobe call failed: {e.stderr}", file=sys.stderr)
         sys.exit(3)
     try:
         return json.loads(res.stdout)
     except json.JSONDecodeError as e:
-        print(f"解析 ffprobe 输出失败：{e}", file=sys.stderr)
+        print(f"Failed to parse ffprobe output: {e}", file=sys.stderr)
         sys.exit(4)
 
 
 def main():
-    ap = argparse.ArgumentParser(description="读取音频文件信息（ffprobe）")
-    ap.add_argument("-i", "--input", required=True, help="音频文件路径")
-    ap.add_argument("--pretty", action="store_true", help="美化打印 JSON")
+    ap = argparse.ArgumentParser(description="Read audio file information (ffprobe)")
+    ap.add_argument("-i", "--input", required=True, help="Audio file path")
+    ap.add_argument("--pretty", action="store_true", help="Pretty print JSON")
     args = ap.parse_args()
 
     p = Path(args.input)
     if not p.exists():
-        print(f"文件不存在：{p}", file=sys.stderr)
+        print(f"File does not exist: {p}", file=sys.stderr)
         sys.exit(1)
 
     info = ffprobe_info(p)

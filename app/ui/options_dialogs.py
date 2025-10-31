@@ -4,7 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
-from PySide6.QtCore import Qt, QCoreApplication
+from PySide6.QtCore import Qt, QCoreApplication, QTimer
 from PySide6.QtWidgets import (
     QDialog, QDialogButtonBox, QVBoxLayout, QFormLayout, QComboBox, QLineEdit,
     QPushButton, QFileDialog, QWidget, QLabel, QHBoxLayout, QCheckBox
@@ -133,3 +133,138 @@ class OpenAISettingsDialog(QDialog):
             self.ed_project.text().strip(),
             self.ed_model.text().strip(),
         )
+
+
+class TextOpsOptionsDialog(QDialog):
+    """Dialog to configure text operations with Ollama (LLM model selection)."""
+
+    def __init__(self, parent: QWidget | None, llm_model: str, base_url: str = "http://localhost:11434") -> None:
+        super().__init__(parent)
+        self.setWindowTitle(self.tr("Text Operations Options"))
+        self.setModal(True)
+        self.base_url = base_url
+
+        lay = QVBoxLayout(self)
+        form = QFormLayout()
+
+        # LLM Model selection (editable ComboBox)
+        self.cmb_llm_model = QComboBox(self)
+        self.cmb_llm_model.setEditable(True)
+        self.cmb_llm_model.addItems([
+            "llama3.1:8b",
+            "qwen2.5:7b",
+            "gemma2:9b",
+        ])
+        self.cmb_llm_model.setCurrentText(llm_model)
+
+        # Ollama status indicator row
+        status_row = QHBoxLayout()
+        self.lbl_ollama_status = QLabel("●")
+        self.lbl_ollama_status.setStyleSheet("color: gray; font-size: 16px;")
+        self.lbl_ollama_status.setToolTip(self.tr("Ollama service status"))
+        self.lbl_status_text = QLabel(self.tr("Checking..."))
+        self.lbl_status_text.setStyleSheet("color: palette(mid);")
+        status_row.addWidget(self.lbl_ollama_status)
+        status_row.addWidget(self.lbl_status_text, 1)
+
+        # Help button
+        btn_help = QPushButton(self.tr("? Setup Guide"))
+        btn_help.clicked.connect(self._on_help)
+
+        form.addRow(self.tr("LLM Model:"), self.cmb_llm_model)
+        form.addRow(self.tr("Status:"), QWidget(self))
+
+        lay.addLayout(form)
+        lay.addLayout(status_row)
+        lay.addWidget(btn_help)
+
+        # Info label
+        info = QLabel(
+            self.tr("Note: Ensure Ollama is installed and running. See Setup Guide for details."),
+            self
+        )
+        info.setStyleSheet("color: palette(mid);")
+        info.setWordWrap(True)
+        lay.addWidget(info)
+
+        # Dialog buttons
+        self.btns = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
+        lay.addWidget(self.btns)
+
+        self.btns.accepted.connect(self.accept)
+        self.btns.rejected.connect(self.reject)
+
+        # Check Ollama status on init and periodically
+        self._check_ollama_status()
+        self._status_timer = QTimer(self)
+        self._status_timer.timeout.connect(self._check_ollama_status)
+        self._status_timer.start(3000)  # Check every 3 seconds
+
+    def _check_ollama_status(self) -> None:
+        """Check Ollama service status and update indicator."""
+        try:
+            from app.core.ai.ollama_textops import check_ollama_available
+            is_available, status_msg = check_ollama_available(self.base_url)
+
+            if is_available:
+                self.lbl_ollama_status.setStyleSheet("color: green; font-size: 16px;")
+                self.lbl_status_text.setText(self.tr("Ollama is running"))
+                self.lbl_status_text.setStyleSheet("color: green;")
+            else:
+                self.lbl_ollama_status.setStyleSheet("color: red; font-size: 16px;")
+                self.lbl_status_text.setText(self.tr("Ollama is not running"))
+                self.lbl_status_text.setStyleSheet("color: red;")
+        except Exception:
+            self.lbl_ollama_status.setStyleSheet("color: gray; font-size: 16px;")
+            self.lbl_status_text.setText(self.tr("Status unknown"))
+            self.lbl_status_text.setStyleSheet("color: gray;")
+
+    def _on_help(self) -> None:
+        """Show Ollama setup guide."""
+        from pathlib import Path
+        import subprocess
+        import sys
+
+        # Try to find the guide file
+        guide_file = Path("docs/OLLAMA_SETUP_GUIDE.md")
+        guide_file_cn = Path("docs/OLLAMA_SETUP_GUIDE_CN.md")
+
+        # Prefer language-specific version if available
+        if guide_file_cn.exists():
+            file_to_open = guide_file_cn
+        elif guide_file.exists():
+            file_to_open = guide_file
+        else:
+            from PySide6.QtWidgets import QMessageBox
+            QMessageBox.warning(
+                self,
+                self.tr("Setup Guide Not Found"),
+                self.tr("Could not find docs/OLLAMA_SETUP_GUIDE.md file.")
+            )
+            return
+
+        # Open the guide file with default application
+        try:
+            if sys.platform == "win32":
+                subprocess.Popen(["cmd", "/c", "start", "", str(file_to_open)], shell=True)
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", str(file_to_open)])
+            else:
+                subprocess.Popen(["xdg-open", str(file_to_open)])
+        except Exception:
+            from PySide6.QtWidgets import QMessageBox
+            QMessageBox.information(
+                self,
+                self.tr("Setup Guide"),
+                self.tr("Please open the file manually: {}").format(str(file_to_open))
+            )
+
+    def closeEvent(self, event) -> None:
+        """Stop the status timer when dialog closes."""
+        if hasattr(self, '_status_timer'):
+            self._status_timer.stop()
+        super().closeEvent(event)
+
+    def values(self) -> str:
+        """Return selected LLM model."""
+        return self.cmb_llm_model.currentText().strip()

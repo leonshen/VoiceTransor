@@ -24,10 +24,10 @@ def svg_icon(resource_path: str,
     pm = QPixmap(size)
     pm.fill(Qt.transparent)
 
-    # 先按原样渲染到透明底
+    # First render as-is to transparent background
     p = QPainter(pm)
     renderer.render(p)
-    # 再用 SourceIn 把有效像素统一染色
+    # Then use SourceIn to uniformly tint all valid pixels
     p.setCompositionMode(QPainter.CompositionMode_SourceIn)
     p.fillRect(pm.rect(), QColor(color))
     p.end()

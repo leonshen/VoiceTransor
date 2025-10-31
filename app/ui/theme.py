@@ -71,7 +71,16 @@ QMenuBar, QMenu, QToolBar, QStatusBar, QDockWidget { background: #2d2d30; color:
 QMenuBar::item:selected, QMenu::item:selected { background: #094771; }
 
 /* Dock title */
-QDockWidget::title { background: #2d2d30; padding: 4px; color: #d4d4d4; }
+QDockWidget::title {
+    background: #2d2d30;
+    padding-left: 8px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    color: #d4d4d4;
+    font-size: 8pt;
+    min-height: 20px;
+    text-align: left;
+}
 
 /* Groups / frames */
 QGroupBox {
