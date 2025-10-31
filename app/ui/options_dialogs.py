@@ -194,11 +194,12 @@ class TextOpsOptionsDialog(QDialog):
         self.btns.accepted.connect(self.accept)
         self.btns.rejected.connect(self.reject)
 
-        # Check Ollama status on init and periodically
-        self._check_ollama_status()
+        # Check Ollama status asynchronously (avoid blocking dialog display)
         self._status_timer = QTimer(self)
         self._status_timer.timeout.connect(self._check_ollama_status)
         self._status_timer.start(3000)  # Check every 3 seconds
+        # Trigger first check after dialog is shown (100ms delay)
+        QTimer.singleShot(100, self._check_ollama_status)
 
     def _check_ollama_status(self) -> None:
         """Check Ollama service status and update indicator."""

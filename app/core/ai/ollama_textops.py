@@ -38,7 +38,7 @@ def check_ollama_available(base_url: str = "http://localhost:11434") -> tuple[bo
         (is_available, message): bool and status message
     """
     try:
-        response = requests.get(f"{base_url}/api/tags", timeout=3)
+        response = requests.get(f"{base_url}/api/tags", timeout=1)
         if response.status_code == 200:
             data = response.json()
             models = data.get("models", [])
@@ -62,7 +62,7 @@ def list_ollama_models(base_url: str = "http://localhost:11434") -> List[str]:
         List of model names
     """
     try:
-        response = requests.get(f"{base_url}/api/tags", timeout=3)
+        response = requests.get(f"{base_url}/api/tags", timeout=1)
         if response.status_code == 200:
             data = response.json()
             models = data.get("models", [])

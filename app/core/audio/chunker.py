@@ -48,14 +48,31 @@ def _nearest_silence_boundary(
 
 
 
-def compute_boundaries(audio_path: Path, cfg: ChunkConfig) -> List[Tuple[float, float]]:
+def compute_boundaries(
+    audio_path: Path,
+    cfg: ChunkConfig,
+    progress_callback: Optional[callable] = None
+) -> List[Tuple[float, float]]:
     """Compute non-overlapping [start_s, end_s) chunks based on silence; fall back to hard cuts.
+
+    Args:
+        audio_path: Path to audio file
+        cfg: Chunking configuration
+        progress_callback: Optional callback function(message: str) for progress updates
 
     Returns:
         List of (start_seconds, end_seconds) tuples covering the entire audio.
     """
+    if progress_callback:
+        progress_callback("Loading audio file for analysis...")
+
     seg = AudioSegment.from_file(str(audio_path))
     total_ms = len(seg)
+    total_duration = total_ms / 1000.0
+
+    if progress_callback:
+        progress_callback(f"Analyzing audio ({total_duration:.1f}s) for silence detection...")
+
     bounds: List[Tuple[int, int]] = []
 
     pos = 0
@@ -64,6 +81,9 @@ def compute_boundaries(audio_path: Path, cfg: ChunkConfig) -> List[Tuple[float, 
         seg, min_silence_len=cfg.min_silence_len_ms,
         silence_thresh=cfg.silence_thresh_dbfs
     )  # list of [start_ms, end_ms]
+
+    if progress_callback:
+        progress_callback(f"Found {len(silences)} silence regions, computing chunk boundaries...")
 
     while pos < total_ms:
         target = pos + int(cfg.target_s * 1000)

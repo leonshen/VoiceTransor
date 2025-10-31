@@ -193,6 +193,12 @@ class VoiceTransorMainWindow(QMainWindow):
         self.opt_models_dir = Path(self.settings.value("stt/models_dir", str(default_models_dir())))
         self._stop_flag = None # type: Optional[threading.Event]
 
+        # Status message animation
+        self._status_animation_timer = QTimer(self)
+        self._status_animation_timer.timeout.connect(self._animate_status_message)
+        self._status_base_message = ""
+        self._status_animation_frame = 0
+
         # OpenAI settings
         self.openai_key = os.getenv("OPENAI_API_KEY", self.settings.value("openai/api_key", ""))
         self.openai_model = self.settings.value("openai/model", "gpt-4o-mini")
@@ -950,7 +956,17 @@ class VoiceTransorMainWindow(QMainWindow):
         @safe
         def on_message(msg: str):
             if msg:
-                self.lbl_status.setText(msg)
+                # Check if this is a long-running operation that needs animation
+                if "Analyzing audio" in msg and "for silence detection" in msg:
+                    # Start animation for this message
+                    self._status_base_message = msg
+                    self._status_animation_frame = 0
+                    self.lbl_status.setText(msg)
+                    self._status_animation_timer.start(300)  # Update every 300ms
+                else:
+                    # Stop any running animation and show the new message
+                    self._status_animation_timer.stop()
+                    self.lbl_status.setText(msg)
 
         @safe
         def on_progress(percent: int, secs_done: float, secs_total: float, eta_secs: float):
@@ -1031,11 +1047,26 @@ class VoiceTransorMainWindow(QMainWindow):
     def _default_pdf_name(self, base_dir: Path) -> Path:
         return base_dir / f"VoiceTransor_result_{timestamp()}.pdf"
 
+    def _animate_status_message(self) -> None:
+        """Animate the status message with a spinner to show activity."""
+        spinner_chars = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+        # Alternative simple spinner: ["|", "/", "—", "\\"]
+        # Alternative dots: ["   ", ".  ", ".. ", "..."]
+
+        spinner = spinner_chars[self._status_animation_frame % len(spinner_chars)]
+        self._status_animation_frame += 1
+
+        # Display message with spinner
+        if self._status_base_message:
+            self.lbl_status.setText(f"{spinner} {self._status_base_message}")
+
     def _show_progress(self, vis: bool) -> None:
         self.pb.setVisible(vis)
         self.lbl_eta.setVisible(vis)
         if not vis:
             self.pb.setValue(0)
+            # Stop any status animation when hiding progress
+            self._status_animation_timer.stop()
             self.lbl_eta.setText("")
 
 

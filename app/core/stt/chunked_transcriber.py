@@ -341,8 +341,10 @@ def transcribe_chunked(
         raise RuntimeError("openai-whisper is not installed. Run: pip install openai-whisper") from e
 
     # load audio once (16k float32)
+    _emit_safe(signals, "message", "Loading audio file...")
     audio_np = whisper.load_audio(str(audio_path))
     duration_s = float(audio_np.shape[-1] / 16000.0)
+    _emit_safe(signals, "message", f"Audio loaded: {duration_s:.1f} seconds")
 
     device = _pick_device(t_opt.device)
     # Use fp16 for CUDA and MPS (both support half precision)
@@ -350,16 +352,22 @@ def transcribe_chunked(
 
     try:
         log.debug("load whisper model ...")
+        _emit_safe(signals, "message", f"Loading Whisper model '{t_opt.model}' on {device}...")
         # cause crash
         # model = whisper.load_model(t_opt.model, device=device, download_root=str(t_opt.models_dir))
         # cached model, ok
-        model = MODEL_MANAGER.get(t_opt.model, device, t_opt.models_dir)        
+        model = MODEL_MANAGER.get(t_opt.model, device, t_opt.models_dir)
         log.debug("loaded whisper model ok")
+        _emit_safe(signals, "message", f"Model '{t_opt.model}' loaded successfully")
     except Exception as e:
         raise RuntimeError(f"Failed to load/download model: {e}") from e
 
     # --- Determine boundaries, possibly resume ---
-    bounds = compute_boundaries(audio_path, c_cfg)
+    def _progress_callback(msg: str):
+        _emit_safe(signals, "message", msg)
+
+    bounds = compute_boundaries(audio_path, c_cfg, progress_callback=_progress_callback)
+    _emit_safe(signals, "message", f"Chunking complete: {len(bounds)} chunks created")
     total = duration_s
 
     ck = _load_checkpoint(audio_path) if resume else None
@@ -369,6 +377,9 @@ def transcribe_chunked(
 
     if ck and _checkpoint_matches(ck, audio_path, t_opt, c_cfg, th_cfg):
         done_until = float(ck.get("done_until_s", 0.0))
+        progress_pct = int(100.0 * done_until / total) if total > 0 else 0
+        _emit_safe(signals, "message", f"Resuming from checkpoint ({progress_pct}% completed previously)...")
+
         if t_opt.include_timestamps:
             segments_accum = list(ck.get("segments_accum", []))
             # Bootstrap previously completed SRT into UI
@@ -392,10 +403,16 @@ def transcribe_chunked(
         while cut_idx < len(bounds) and bounds[cut_idx][1] <= done_until + 1e-3:
             cut_idx += 1
         start_idx = cut_idx
+        _emit_safe(signals, "message", f"Skipping {start_idx} completed chunks, continuing from chunk {start_idx+1}/{len(bounds)}")
     else:
         start_idx = 0
+        _emit_safe(signals, "message", "Starting transcription from beginning...")
 
     t0 = time.time()
+
+    # ETA calculation state - use moving average for accuracy
+    chunk_times = []  # Track recent chunk processing times
+    eta_window_size = 5  # Use last 5 chunks for ETA calculation
 
     # --- Loop over chunks ---
     for i in range(start_idx, len(bounds)):
@@ -413,6 +430,9 @@ def transcribe_chunked(
         e_idx = int(end_s * 16000)
         chunk_audio = audio_np[s_idx:e_idx]
 
+        # Track chunk processing time for accurate ETA
+        chunk_start_time = time.time()
+
         # transcribe this chunk
         try:
             res = model.transcribe(
@@ -427,6 +447,10 @@ def transcribe_chunked(
         finally:
             # Release chunk audio immediately after transcription
             del chunk_audio
+
+        # Record chunk processing time
+        chunk_elapsed = time.time() - chunk_start_time
+        chunk_times.append(chunk_elapsed)
 
         # accumulate + stream to UI
         segs = res.get("segments") or []
@@ -458,11 +482,19 @@ def transcribe_chunked(
         # persist checkpoint routinely
         _persist_checkpoint(audio_path, t_opt, c_cfg, th_cfg, total, done_until, text_accum_parts, segments_accum)
 
-        # progress & ETA
-        elapsed = max(time.time() - t0, 1e-3)
+        # progress & ETA calculation using moving average
         percent = int(min(100, round(100.0 * done_until / total)))
-        remain = max(total - done_until, 0.0)
-        eta = (elapsed / max(done_until, 1e-3)) * remain if done_until > 0 else 0.0
+        remain_chunks = len(bounds) - (i + 1)
+
+        # Calculate ETA based on recent chunk times (more accurate than global average)
+        if remain_chunks > 0 and chunk_times:
+            # Use last N chunks for ETA (skip first chunk if it's the only one - cold start)
+            recent_times = chunk_times[-eta_window_size:] if len(chunk_times) > 1 else chunk_times
+            avg_chunk_time = sum(recent_times) / len(recent_times)
+            eta = avg_chunk_time * remain_chunks
+        else:
+            eta = 0.0
+
         _emit_safe(signals, "progress", percent, done_until, total, eta)
         _emit_safe(signals, "message", f"Processed chunk {i+1}/{len(bounds)} ({chunk_len:.1f}s)")
 
