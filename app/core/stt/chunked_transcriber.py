@@ -21,6 +21,16 @@ log = logging.getLogger(__name__)
 import gc
 
 class _ModelManager:
+    """
+    Manages Whisper model lifecycle with support for dynamic model switching.
+
+    Implements aggressive GPU memory cleanup to enable switching between different
+    models without requiring app restart. Uses multi-stage cleanup process including:
+    - Model migration to CPU
+    - Multiple garbage collection rounds
+    - CUDA cache clearing and synchronization
+    - Memory statistics reset
+    """
     def __init__(self):
         self._key = None
         self._model = None
@@ -29,61 +39,102 @@ class _ModelManager:
         key = (name, device, str(models_dir))
         if self._key == key and self._model is not None:
             return self._model
-        # to avoid crash
-        if self._model:
-            raise RuntimeError("To load the other model, please restart the App.")
-            # raise RuntimeError("__MODEL_CANNOT_BE_LOADED_MORE_THAN_1TIME__")
 
+        # Try to safely unload existing model before switching
+        if self._model is not None:
+            log.info(f"Switching model from {self._key} to {key}, attempting to unload...")
+            success = self._unload()
+            if not success:
+                raise RuntimeError("To load the other model, please restart the App.")
 
-        # Safely unload before switching (does not work)
-        self._unload()
-        # Then load new model
+        # Load new model
         import whisper  # type: ignore
+        log.info(f"Loading model: {name} on device: {device}")
         self._model = whisper.load_model(name, device=device, download_root=str(models_dir))
         self._key = key
         return self._model
 
-    def _unload(self):
+    def _unload(self) -> bool:
+        """
+        Aggressively unload the model and free GPU memory.
+        Returns True if successful, False otherwise.
+        """
         if self._model is None:
-            return
+            return True
+
         try:
             import torch
-            # First migrate parameters back to CPU (release VRAM)
+            log.debug("Starting aggressive model unload...")
+
+            # Step 1: Move model to CPU to release GPU memory
             try:
-                self._model.to("cpu")
-            except Exception:
-                pass
-            # Break reference
-            m = self._model
+                if torch.cuda.is_available():
+                    self._model.to("cpu")
+                    log.debug("Model moved to CPU")
+            except Exception as e:
+                log.warning(f"Failed to move model to CPU: {e}")
+
+            # Step 2: Delete model and clear reference
+            model_ref = self._model
             self._model = None
             self._key = None
-            del m
-            # Synchronize and clear CUDA allocator
+            del model_ref
+            log.debug("Model reference deleted")
+
+            # Step 3: Multiple rounds of garbage collection
+            for i in range(3):
+                gc.collect()
+            log.debug("Garbage collection completed")
+
+            # Step 4: Aggressive GPU cleanup (if CUDA available)
             if torch.cuda.is_available():
-                torch.cuda.synchronize()
-                torch.cuda.empty_cache()
-        except Exception:
-            # Ignore cleanup exceptions
+                try:
+                    # Synchronize all CUDA streams
+                    torch.cuda.synchronize()
+
+                    # Empty cache multiple times
+                    for i in range(3):
+                        torch.cuda.empty_cache()
+
+                    # Clear IPC collections (shared memory)
+                    try:
+                        torch.cuda.ipc_collect()
+                    except Exception:
+                        pass
+
+                    # Reset memory stats
+                    try:
+                        torch.cuda.reset_peak_memory_stats()
+                        torch.cuda.reset_accumulated_memory_stats()
+                    except Exception:
+                        pass
+
+                    log.debug("GPU memory cleanup completed")
+
+                    # Step 5: Log memory stats for debugging
+                    allocated = torch.cuda.memory_allocated() / 1024**2  # MB
+                    reserved = torch.cuda.memory_reserved() / 1024**2    # MB
+                    log.info(f"GPU memory after cleanup - Allocated: {allocated:.1f}MB, Reserved: {reserved:.1f}MB")
+
+                except Exception as e:
+                    log.warning(f"GPU cleanup error: {e}")
+
+            # Step 6: Short wait to let system complete cleanup
+            time.sleep(0.5)
+
+            log.info("Model unloaded successfully")
+            return True
+
+        except Exception as e:
+            log.error(f"Failed to unload model: {e}")
             self._model = None
             self._key = None
-        finally:
-            gc.collect()
+            return False
 
     def close(self):
         self._unload()
 
 MODEL_MANAGER = _ModelManager()
-
-# does not work when switch model from second time trans
-
-# def _get_model_cached(name: str, device: str, models_dir: Path):
-#     key = (name, device, str(models_dir))
-#     m = _MODEL_CACHE.get(key)
-#     if m is None:
-#         import whisper  # type: ignore
-#         m = whisper.load_model(name, device=device, download_root=str(models_dir))
-#         _MODEL_CACHE[key] = m
-#     return m
 
 def _emit_safe(signals, name: str, *args) -> None:
     try:
