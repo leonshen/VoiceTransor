@@ -20,18 +20,30 @@ def is_model_cached(model: str, models_dir: Path) -> bool:
 
 
 def pick_device(choice: str) -> str:
-    """Return device according to choice and availability."""
+    """
+    Return device according to choice and availability.
+    Supports: cpu, cuda (NVIDIA), mps (Apple Silicon), auto
+    """
     try:
         import torch  # noqa: F401
         has_cuda = torch.cuda.is_available()
+        has_mps = hasattr(torch.backends, 'mps') and torch.backends.mps.is_available()
     except Exception:
         has_cuda = False
+        has_mps = False
 
     if choice == "cpu":
         return "cpu"
     if choice == "cuda":
         return "cuda" if has_cuda else "cpu"
-    return "cuda" if has_cuda else "cpu"  # auto
+    if choice == "mps":
+        return "mps" if has_mps else "cpu"
+    # auto: prefer cuda > mps > cpu
+    if has_cuda:
+        return "cuda"
+    if has_mps:
+        return "mps"
+    return "cpu"
 
 
 def transcribe(
@@ -48,7 +60,7 @@ def transcribe(
         model_name: Whisper model name ('tiny', 'base', 'small').
         language: Target language code, or None to autodetect.
         models_dir: Directory to cache/download models under.
-        device_choice: 'auto' | 'cpu' | 'cuda'.
+        device_choice: 'auto' | 'cpu' | 'cuda' | 'mps'.
 
     Returns:
         Plain text transcript  (punctuated sentences).
@@ -64,7 +76,8 @@ def transcribe(
     models_dir = models_dir or default_models_dir()
     models_dir.mkdir(parents=True, exist_ok=True)
     device = pick_device(device_choice)
-    fp16 = device == "cuda"
+    # Use fp16 for CUDA and MPS (both support half precision)
+    fp16 = device in ("cuda", "mps")
 
     try:
         model = whisper.load_model(model_name, device=device, download_root=str(models_dir))

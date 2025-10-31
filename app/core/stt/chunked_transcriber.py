@@ -25,11 +25,14 @@ class _ModelManager:
     Manages Whisper model lifecycle with support for dynamic model switching.
 
     Implements aggressive GPU memory cleanup to enable switching between different
-    models without requiring app restart. Uses multi-stage cleanup process including:
+    models without requiring app restart. Supports CUDA (NVIDIA) and MPS (Apple Silicon).
+
+    Uses multi-stage cleanup process including:
     - Model migration to CPU
     - Multiple garbage collection rounds
-    - CUDA cache clearing and synchronization
-    - Memory statistics reset
+    - GPU cache clearing (CUDA/MPS)
+    - CUDA synchronization and memory statistics reset
+    - MPS cache clearing for Apple Silicon devices
     """
     def __init__(self):
         self._key = None
@@ -57,6 +60,7 @@ class _ModelManager:
     def _unload(self) -> bool:
         """
         Aggressively unload the model and free GPU memory.
+        Supports CUDA (NVIDIA) and MPS (Apple Silicon) backends.
         Returns True if successful, False otherwise.
         """
         if self._model is None:
@@ -68,7 +72,10 @@ class _ModelManager:
 
             # Step 1: Move model to CPU to release GPU memory
             try:
-                if torch.cuda.is_available():
+                has_cuda = torch.cuda.is_available()
+                has_mps = hasattr(torch.backends, 'mps') and torch.backends.mps.is_available()
+
+                if has_cuda or has_mps:
                     self._model.to("cpu")
                     log.debug("Model moved to CPU")
             except Exception as e:
@@ -86,10 +93,13 @@ class _ModelManager:
                 gc.collect()
             log.debug("Garbage collection completed")
 
-            # Step 4: Aggressive GPU cleanup (if CUDA available)
-            if torch.cuda.is_available():
+            # Step 4: Aggressive GPU cleanup (CUDA or MPS)
+            has_cuda = torch.cuda.is_available()
+            has_mps = hasattr(torch.backends, 'mps') and torch.backends.mps.is_available()
+
+            if has_cuda:
                 try:
-                    # Synchronize all CUDA streams
+                    # CUDA cleanup
                     torch.cuda.synchronize()
 
                     # Empty cache multiple times
@@ -109,15 +119,30 @@ class _ModelManager:
                     except Exception:
                         pass
 
-                    log.debug("GPU memory cleanup completed")
+                    log.debug("CUDA memory cleanup completed")
 
                     # Step 5: Log memory stats for debugging
                     allocated = torch.cuda.memory_allocated() / 1024**2  # MB
                     reserved = torch.cuda.memory_reserved() / 1024**2    # MB
-                    log.info(f"GPU memory after cleanup - Allocated: {allocated:.1f}MB, Reserved: {reserved:.1f}MB")
+                    log.info(f"CUDA memory after cleanup - Allocated: {allocated:.1f}MB, Reserved: {reserved:.1f}MB")
 
                 except Exception as e:
-                    log.warning(f"GPU cleanup error: {e}")
+                    log.warning(f"CUDA cleanup error: {e}")
+
+            elif has_mps:
+                try:
+                    # MPS cleanup (Apple Silicon)
+                    # Empty MPS cache multiple times
+                    for i in range(3):
+                        torch.mps.empty_cache()
+
+                    log.debug("MPS memory cleanup completed")
+
+                    # MPS doesn't have detailed memory stats like CUDA
+                    log.info("MPS memory cache cleared")
+
+                except Exception as e:
+                    log.warning(f"MPS cleanup error: {e}")
 
             # Step 6: Short wait to let system complete cleanup
             time.sleep(0.5)
@@ -320,7 +345,8 @@ def transcribe_chunked(
     duration_s = float(audio_np.shape[-1] / 16000.0)
 
     device = _pick_device(t_opt.device)
-    fp16 = device == "cuda"
+    # Use fp16 for CUDA and MPS (both support half precision)
+    fp16 = device in ("cuda", "mps")
 
     try:
         log.debug("load whisper model ...")
@@ -441,10 +467,13 @@ def transcribe_chunked(
         _emit_safe(signals, "message", f"Processed chunk {i+1}/{len(bounds)} ({chunk_len:.1f}s)")
 
         # Clean GPU cache after each chunk to prevent memory accumulation
-        if device == "cuda" and (i + 1) % 2 == 0:  # Every 2 chunks
+        if (i + 1) % 2 == 0:  # Every 2 chunks
             try:
                 import torch
-                torch.cuda.empty_cache()
+                if device == "cuda" and torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                elif device == "mps" and hasattr(torch, 'mps'):
+                    torch.mps.empty_cache()
             except Exception:
                 pass
 
@@ -465,12 +494,15 @@ def transcribe_chunked(
         # Delete audio numpy array to free memory
         del audio_np
 
-        # Force GPU memory cleanup if using CUDA
-        if device == "cuda":
-            import torch
+        # Force GPU memory cleanup if using CUDA or MPS
+        import torch
+        if device == "cuda" and torch.cuda.is_available():
             torch.cuda.empty_cache()
             torch.cuda.synchronize()
-            log.debug("GPU memory released after transcription")
+            log.debug("CUDA memory released after transcription")
+        elif device == "mps" and hasattr(torch, 'mps'):
+            torch.mps.empty_cache()
+            log.debug("MPS memory released after transcription")
 
         # Force garbage collection
         gc.collect()
@@ -484,17 +516,30 @@ def transcribe_chunked(
 # Helpers
 # -------------------------
 def _pick_device(choice: str) -> str:
+    """
+    Select the appropriate device for Whisper model.
+    Supports: cpu, cuda (NVIDIA), mps (Apple Silicon), auto
+    """
     try:
         import torch  # type: ignore
         has_cuda = torch.cuda.is_available()
+        has_mps = hasattr(torch.backends, 'mps') and torch.backends.mps.is_available()
     except Exception:
         has_cuda = False
+        has_mps = False
 
     if choice == "cpu":
         return "cpu"
     if choice == "cuda":
         return "cuda" if has_cuda else "cpu"
-    return "cuda" if has_cuda else "cpu"  # auto
+    if choice == "mps":
+        return "mps" if has_mps else "cpu"
+    # auto: prefer cuda > mps > cpu
+    if has_cuda:
+        return "cuda"
+    if has_mps:
+        return "mps"
+    return "cpu"
 
 
 def _checkpoint_matches(ck: Dict[str, Any], audio_path: Path,

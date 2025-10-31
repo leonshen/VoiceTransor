@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Optional, Dict, Any, List
 import requests
 import json
+import sys
 
 import logging
 log = logging.getLogger(__name__)
@@ -126,10 +127,18 @@ def run_text_op(
     # Check Ollama availability
     is_available, status_msg = check_ollama_available(base_url)
     if not is_available:
+        # Platform-specific installation instructions
+        if sys.platform == "win32":
+            install_script = "install_ollama.bat"
+            run_cmd = "install_ollama.bat"
+        else:
+            install_script = "install_ollama.sh"
+            run_cmd = "bash install_ollama.sh"
+
         raise RuntimeError(
             f"Ollama is not available: {status_msg}\n\n"
             "Please install and start Ollama:\n"
-            "1. Run 'install_ollama.bat' in the project directory, OR\n"
+            f"1. Run '{run_cmd}' in the project directory, OR\n"
             "2. Download from https://ollama.com/download\n"
             "3. After installation, run 'ollama serve' in a terminal"
         )

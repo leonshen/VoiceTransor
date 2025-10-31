@@ -48,8 +48,8 @@ class TranscribeOptionsDialog(QDialog):
         self.chk_srt.setChecked(False)
 
         self.cmb_device = QComboBox(self)
-        self.cmb_device.addItems(["auto", "cpu", "cuda"])
-        if device in ["auto", "cpu", "cuda"]:
+        self.cmb_device.addItems(["auto", "cpu", "cuda", "mps"])
+        if device in ["auto", "cpu", "cuda", "mps"]:
             self.cmb_device.setCurrentText(device)
 
         self.ed_models_dir = QLineEdit(models_dir, self)
