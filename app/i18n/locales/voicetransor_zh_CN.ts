@@ -35,6 +35,79 @@
     </message>
 </context>
 <context>
+    <name>TextOpsOptionsDialog</name>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="143"/>
+        <source>Text Operations Options</source>
+        <translation>文本操作选项</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="164"/>
+        <source>Ollama service status</source>
+        <translation>Ollama 服务状态</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="165"/>
+        <source>Checking...</source>
+        <translation>正在检查...</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="171"/>
+        <source>? Setup Guide</source>
+        <translation>? 设置指南</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="174"/>
+        <source>LLM Model:</source>
+        <translation>LLM 模型：</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="175"/>
+        <source>Status:</source>
+        <translation>状态：</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="183"/>
+        <source>Note: Ensure Ollama is installed and running. See Setup Guide for details.</source>
+        <translation>注意：请确保 Ollama 已安装并运行。详情请参阅设置指南。</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="212"/>
+        <source>Ollama is running</source>
+        <translation>Ollama 正在运行</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="216"/>
+        <source>Ollama is not running</source>
+        <translation>Ollama 未运行</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="220"/>
+        <source>Status unknown</source>
+        <translation>状态未知</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="242"/>
+        <source>Setup Guide Not Found</source>
+        <translation>未找到设置指南</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="244"/>
+        <source>Could not find docs/OLLAMA_SETUP_GUIDE.md file.</source>
+        <translation>找不到 docs/OLLAMA_SETUP_GUIDE.md 文件。</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="259"/>
+        <source>Setup Guide</source>
+        <translation>设置指南</translation>
+    </message>
+    <message>
+        <location filename="../../ui/options_dialogs.py" line="260"/>
+        <source>Please open the file manually: {}</source>
+        <translation>请手动打开文件：{}</translation>
+    </message>
+</context>
+<context>
     <name>TranscribeOptionsDialog</name>
     <message>
         <location filename="../../ui/options_dialogs.py" line="30"/>
@@ -85,57 +158,57 @@
 <context>
     <name>VoiceTransorMainWindow</name>
     <message>
-        <location filename="../../ui/main_window.py" line="412"/>
+        <location filename="../../ui/main_window.py" line="425"/>
         <source>Main Toolbar</source>
         <translation>主工具栏</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="517"/>
+        <location filename="../../ui/main_window.py" line="530"/>
         <source>Waveform placeholder (to be implemented: rendering/transport)</source>
         <translation>波形占位（待实现：渲染/传输）</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="550"/>
+        <location filename="../../ui/main_window.py" line="563"/>
         <source>File:</source>
         <translation>文件：</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="551"/>
+        <location filename="../../ui/main_window.py" line="564"/>
         <source>Path:</source>
         <translation>路径：</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="552"/>
+        <location filename="../../ui/main_window.py" line="565"/>
         <source>Container:</source>
         <translation>容器：</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="553"/>
+        <location filename="../../ui/main_window.py" line="566"/>
         <source>Codec:</source>
         <translation>编码：</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="554"/>
+        <location filename="../../ui/main_window.py" line="567"/>
         <source>Channels:</source>
         <translation>声道：</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="555"/>
+        <location filename="../../ui/main_window.py" line="568"/>
         <source>Sample rate:</source>
         <translation>采样率：</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="556"/>
+        <location filename="../../ui/main_window.py" line="569"/>
         <source>Bitrate:</source>
         <translation>比特率：</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="557"/>
+        <location filename="../../ui/main_window.py" line="570"/>
         <source>Duration:</source>
         <translation>时长：</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="558"/>
+        <location filename="../../ui/main_window.py" line="571"/>
         <source>Size:</source>
         <translation>大小：</translation>
     </message>
@@ -148,34 +221,35 @@
         <translation type="vanished">处理中...</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="965"/>
+        <location filename="../../ui/main_window.py" line="996"/>
         <source>Cancelled</source>
         <translation>已取消</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="966"/>
+        <location filename="../../ui/main_window.py" line="997"/>
         <source>Transcription was cancelled.</source>
         <translation>转录已取消。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="922"/>
-        <location filename="../../ui/main_window.py" line="971"/>
-        <location filename="../../ui/main_window.py" line="1180"/>
+        <location filename="../../ui/main_window.py" line="943"/>
+        <location filename="../../ui/main_window.py" line="1002"/>
+        <location filename="../../ui/main_window.py" line="1261"/>
+        <location filename="../../ui/main_window.py" line="1569"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="947"/>
+        <location filename="../../ui/main_window.py" line="978"/>
         <source>ETA {mm:02d}:{ss:02d}</source>
         <translation>预计剩余 {mm:02d}:{ss:02d}</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1173"/>
+        <location filename="../../ui/main_window.py" line="1254"/>
         <source>Audio files (*.wav *.mp3 *.m4a *.flac *.ogg *.aac);;All files (*.*)</source>
         <translation>音频文件 (*.wav *.mp3 *.m4a *.flac *.ogg *.aac);;所有文件 (*.*)</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1173"/>
+        <location filename="../../ui/main_window.py" line="1254"/>
         <source>Select Audio File</source>
         <translation>选则音频文件</translation>
     </message>
@@ -184,12 +258,12 @@
         <translation type="vanished">文件不存在：{path}</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1191"/>
+        <location filename="../../ui/main_window.py" line="1272"/>
         <source>ffprobe Error</source>
         <translation>ffprobe 错误</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1194"/>
+        <location filename="../../ui/main_window.py" line="1275"/>
         <source>Unknown Error</source>
         <translation>未知错误</translation>
     </message>
@@ -198,7 +272,7 @@
         <translation type="vanished">读取音频信息失败：{err}</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1199"/>
+        <location filename="../../ui/main_window.py" line="1280"/>
         <source>Loaded: {p.name}</source>
         <translation>已加载：{p.name}</translation>
     </message>
@@ -207,30 +281,30 @@
         <translation type="vanished">播放/暂停</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="745"/>
-        <location filename="../../ui/main_window.py" line="770"/>
-        <location filename="../../ui/main_window.py" line="1207"/>
-        <location filename="../../ui/main_window.py" line="1343"/>
-        <location filename="../../ui/main_window.py" line="1379"/>
-        <location filename="../../ui/main_window.py" line="1458"/>
-        <location filename="../../ui/main_window.py" line="1462"/>
-        <location filename="../../ui/main_window.py" line="1507"/>
-        <location filename="../../ui/main_window.py" line="1511"/>
+        <location filename="../../ui/main_window.py" line="758"/>
+        <location filename="../../ui/main_window.py" line="783"/>
+        <location filename="../../ui/main_window.py" line="1288"/>
+        <location filename="../../ui/main_window.py" line="1459"/>
+        <location filename="../../ui/main_window.py" line="1495"/>
+        <location filename="../../ui/main_window.py" line="1600"/>
+        <location filename="../../ui/main_window.py" line="1604"/>
+        <location filename="../../ui/main_window.py" line="1649"/>
+        <location filename="../../ui/main_window.py" line="1653"/>
         <source>Info</source>
         <translation>信息</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1207"/>
+        <location filename="../../ui/main_window.py" line="1288"/>
         <source>Please import an audio file first.</source>
         <translation>请先导入一个音频文件。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1231"/>
+        <location filename="../../ui/main_window.py" line="1321"/>
         <source>Download Model</source>
         <translation>下载模型</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1232"/>
+        <location filename="../../ui/main_window.py" line="1322"/>
         <source>Model &apos;{model}&apos; is not cached yet.
 Download to:
 {models_dir}
@@ -243,48 +317,48 @@ Start now?</source>
 现在开始下载？</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1298"/>
+        <location filename="../../ui/main_window.py" line="1412"/>
         <source>Transcription Finished</source>
         <translation>转录结束</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1299"/>
+        <location filename="../../ui/main_window.py" line="1413"/>
         <source>Completed with model &apos;{model}&apos; on device &apos;{device}&apos;.</source>
         <translation>已使用模型“{model}”在设备“{device}”上完成。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1338"/>
+        <location filename="../../ui/main_window.py" line="1454"/>
         <source>Cancelling…</source>
         <translation>正在取消…</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1343"/>
+        <location filename="../../ui/main_window.py" line="1459"/>
         <source>No transcript text to save.</source>
         <translation>没有可保存的转录文本。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1349"/>
+        <location filename="../../ui/main_window.py" line="1465"/>
         <source>Save Transcript as TXT</source>
         <translation>保存转录文本到TXT文件</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1350"/>
+        <location filename="../../ui/main_window.py" line="1466"/>
         <source>Text files (*.txt);;All files (*.*)</source>
         <translation>文本文件 (*.txt);;所有文件 (*.*)</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="764"/>
-        <location filename="../../ui/main_window.py" line="1355"/>
+        <location filename="../../ui/main_window.py" line="777"/>
+        <location filename="../../ui/main_window.py" line="1471"/>
         <source>Saved</source>
         <translation>已保存</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1355"/>
+        <location filename="../../ui/main_window.py" line="1471"/>
         <source>Saved to: {path}</source>
         <translation>保存到{path}</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1357"/>
+        <location filename="../../ui/main_window.py" line="1473"/>
         <source>Write Failed</source>
         <translation>写失败</translation>
     </message>
@@ -343,8 +417,8 @@ Choose a font file now?</source>
         <translation type="vanished">字体文件 (*.ttf *.otf);;所有文件 (*.*)</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1501"/>
-        <location filename="../../ui/main_window.py" line="1528"/>
+        <location filename="../../ui/main_window.py" line="1643"/>
+        <location filename="../../ui/main_window.py" line="1670"/>
         <source>Exported</source>
         <translation>已导出</translation>
     </message>
@@ -361,13 +435,36 @@ Choose a font file now?</source>
         <translation type="vanished">导出失败</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1544"/>
-        <location filename="../../ui/main_window.py" line="1643"/>
+        <location filename="../../ui/main_window.py" line="1686"/>
+        <location filename="../../ui/main_window.py" line="1785"/>
         <source>About VoiceTransor</source>
         <translation>关于 VoiceTransor</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1622"/>
+        <location filename="../../ui/main_window.py" line="1696"/>
+        <source>VoiceTransor {version}
+Speech-to-Text &amp; Text Assistant
+
+Features:
+- Import audio files
+- Local transcription (Whisper, with resume support)
+- AI-powered text processing
+- Export results (TXT / PDF)
+
+Supported Platforms: Windows, macOS</source>
+        <translation>VoiceTransor {version}
+语音转文字与文本助手
+
+功能：
+- 导入音频文件
+- 本地转录（Whisper，支持断点续转）
+- AI 驱动的文本处理
+- 导出结果（TXT / PDF）
+
+支持平台：Windows、macOS</translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="1764"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
@@ -376,42 +473,42 @@ Choose a font file now?</source>
         <translation type="vanished">回放</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1625"/>
+        <location filename="../../ui/main_window.py" line="1767"/>
         <source>Tools</source>
         <translation>工具</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1626"/>
+        <location filename="../../ui/main_window.py" line="1768"/>
         <source>View</source>
         <translation>视图</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1627"/>
+        <location filename="../../ui/main_window.py" line="1769"/>
         <source>Language</source>
         <translation>语言</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1628"/>
+        <location filename="../../ui/main_window.py" line="1770"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1631"/>
+        <location filename="../../ui/main_window.py" line="1773"/>
         <source>Import Audio…</source>
         <translation>导入音频…</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1634"/>
+        <location filename="../../ui/main_window.py" line="1776"/>
         <source>Transcribe to Text</source>
         <translation>转录成文本</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1636"/>
+        <location filename="../../ui/main_window.py" line="1778"/>
         <source>Cancel Transcription</source>
         <translation>取消转录</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1638"/>
+        <location filename="../../ui/main_window.py" line="1780"/>
         <source>Save Transcript as TXT…</source>
         <translation>保存转录文本到TXT文件...</translation>
     </message>
@@ -424,17 +521,16 @@ Choose a font file now?</source>
         <translation type="vanished">导出摘要为 PDF…</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1642"/>
         <source>OpenAI Settings…</source>
-        <translation>OpenAI 设置...</translation>
+        <translation type="vanished">OpenAI 设置...</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1645"/>
+        <location filename="../../ui/main_window.py" line="1787"/>
         <source>Exit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1647"/>
+        <location filename="../../ui/main_window.py" line="1789"/>
         <source>Show Audio Info Dock</source>
         <translation>显示音频信息窗格</translation>
     </message>
@@ -443,202 +539,239 @@ Choose a font file now?</source>
         <translation type="vanished">自动换行</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1650"/>
+        <location filename="../../ui/main_window.py" line="1792"/>
         <source>Monospace Font for Transcript</source>
         <translation>转录文本用等宽字体</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="281"/>
-        <location filename="../../ui/main_window.py" line="1651"/>
+        <location filename="../../ui/main_window.py" line="293"/>
+        <location filename="../../ui/main_window.py" line="1793"/>
         <source>Zoom In</source>
         <translation>放大</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="302"/>
-        <location filename="../../ui/main_window.py" line="1652"/>
+        <location filename="../../ui/main_window.py" line="314"/>
+        <location filename="../../ui/main_window.py" line="1794"/>
         <source>Zoom Out</source>
         <translation>缩小</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="306"/>
+        <location filename="../../ui/main_window.py" line="318"/>
         <source>Zoom Reset</source>
         <translation>重置缩放</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="575"/>
+        <location filename="../../ui/main_window.py" line="588"/>
         <source>Prompt</source>
         <translation>提示词</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="584"/>
+        <location filename="../../ui/main_window.py" line="597"/>
         <source>Preset:</source>
         <translation>预设：</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="594"/>
+        <location filename="../../ui/main_window.py" line="607"/>
         <source>Describe what to do with the transcript (e.g., summarize, translate, extract action items)…</source>
         <translation>请描述要对转录文本执行的操作（如：摘要、翻译、提取行动项）…</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="627"/>
-        <location filename="../../ui/main_window.py" line="680"/>
+        <location filename="../../ui/main_window.py" line="640"/>
+        <location filename="../../ui/main_window.py" line="693"/>
         <source>— Select preset —</source>
         <translation>— 选择预设 —</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="628"/>
+        <location filename="../../ui/main_window.py" line="641"/>
         <source>Summarize</source>
         <translation>摘要</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="632"/>
+        <location filename="../../ui/main_window.py" line="645"/>
         <source>Translate to Chinese</source>
         <translation>翻译为中文</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="638"/>
+        <location filename="../../ui/main_window.py" line="651"/>
         <source>Meeting minutes</source>
         <translation>会议纪要</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="640"/>
+        <location filename="../../ui/main_window.py" line="653"/>
         <source>Translate SRT to Chinese (preserve timestamps)</source>
         <translation>翻译 SRT 为中文（保留时间戳）</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="700"/>
+        <location filename="../../ui/main_window.py" line="713"/>
         <source>➕ Save current as preset…</source>
         <translation>➕ 将当前内容保存为预设…</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="705"/>
+        <location filename="../../ui/main_window.py" line="718"/>
         <source>🗑 Delete a custom preset…</source>
         <translation>🗑 删除自定义预设…</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="745"/>
+        <location filename="../../ui/main_window.py" line="758"/>
         <source>Prompt is empty. Nothing to save.</source>
         <translation>提示词为空，无可保存内容。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="747"/>
+        <location filename="../../ui/main_window.py" line="760"/>
         <source>Save Prompt Preset</source>
         <translation>保存提示词预设</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="747"/>
+        <location filename="../../ui/main_window.py" line="760"/>
         <source>Preset name:</source>
         <translation>预设名称：</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="764"/>
+        <location filename="../../ui/main_window.py" line="777"/>
         <source>Preset saved: {name}</source>
         <translation>预设已保存：{name}</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="770"/>
+        <location filename="../../ui/main_window.py" line="783"/>
         <source>No custom presets to delete.</source>
         <translation>没有可删除的自定义预设。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="784"/>
+        <location filename="../../ui/main_window.py" line="797"/>
         <source>Delete Prompt Preset</source>
         <translation>删除提示词预设</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="785"/>
+        <location filename="../../ui/main_window.py" line="798"/>
         <source>Select a preset to delete:</source>
         <translation>选择要删除的预设：</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="796"/>
+        <location filename="../../ui/main_window.py" line="809"/>
         <source>Confirm Delete</source>
         <translation>确认删除</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="797"/>
+        <location filename="../../ui/main_window.py" line="810"/>
         <source>Delete preset “{name}”? This cannot be undone.</source>
         <translation>删除预设“{name}”？此操作不可撤销。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="806"/>
+        <location filename="../../ui/main_window.py" line="819"/>
         <source>Deleted</source>
         <translation>已删除</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="806"/>
+        <location filename="../../ui/main_window.py" line="819"/>
         <source>Preset deleted: {name}</source>
         <translation>已删除预设：{name}</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="933"/>
+        <location filename="../../ui/main_window.py" line="954"/>
         <source>Working…</source>
         <translation>正在处理…</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1180"/>
+        <location filename="../../ui/main_window.py" line="1237"/>
+        <source>Warning</source>
+        <translation>警告</translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="1238"/>
+        <source>A task is running. Do you want to stop it and load new audio?</source>
+        <translation>有任务正在运行。是否停止并加载新音频？</translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="1261"/>
         <source>File does not exist: {Path}</source>
         <translation>文件不存在：{Path}</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1194"/>
+        <location filename="../../ui/main_window.py" line="1275"/>
         <source>Failed to read audio info: {e}</source>
         <translation>读取音频信息失败：{e}</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1379"/>
+        <location filename="../../ui/main_window.py" line="1295"/>
+        <source>Busy</source>
+        <translation>忙碌中</translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="1297"/>
+        <source>A transcription task is already running. Please wait for it to complete.</source>
+        <translation>转录任务正在运行中。请等待其完成。</translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="1495"/>
         <source>Please transcribe or paste text first.</source>
         <translation>请先转录音频或粘贴文本。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1424"/>
+        <location filename="../../ui/main_window.py" line="1527"/>
+        <source>Ollama Not Available</source>
+        <translation>Ollama 不可用</translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="1532"/>
+        <source>Ollama service is not running.
+
+{status}
+
+Please ensure Ollama is started before running text operations.</source>
+        <translation>Ollama 服务未运行。
+
+{status}
+
+请在运行文本操作前确保 Ollama 已启动。</translation>
+    </message>
+    <message>
+        <location filename="../../ui/main_window.py" line="1566"/>
         <source>Text operation completed.</source>
         <translation>文本操作已完成。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1458"/>
-        <location filename="../../ui/main_window.py" line="1462"/>
+        <location filename="../../ui/main_window.py" line="1600"/>
+        <location filename="../../ui/main_window.py" line="1604"/>
         <source>No result to export.</source>
         <translation>无可导出的结果。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1467"/>
+        <location filename="../../ui/main_window.py" line="1609"/>
         <source>Export Result as PDF</source>
         <translation>导出结果为 PDF</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1470"/>
+        <location filename="../../ui/main_window.py" line="1612"/>
         <source>PDF Files (*.pdf)</source>
         <translation>PDF 文件 (*.pdf)</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1501"/>
+        <location filename="../../ui/main_window.py" line="1643"/>
         <source>PDF saved: {path}</source>
         <translation>已保存 PDF：{path}</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1507"/>
-        <location filename="../../ui/main_window.py" line="1511"/>
+        <location filename="../../ui/main_window.py" line="1649"/>
+        <location filename="../../ui/main_window.py" line="1653"/>
         <source>No result to save.</source>
         <translation>无可保存的结果。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1516"/>
+        <location filename="../../ui/main_window.py" line="1658"/>
         <source>Save Result as Text</source>
         <translation>将结果保存为文本</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1519"/>
+        <location filename="../../ui/main_window.py" line="1661"/>
         <source>Text Files (*.txt);;All Files (*.*)</source>
         <translation>文本文件 (*.txt);;所有文件 (*.*)</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1528"/>
+        <location filename="../../ui/main_window.py" line="1670"/>
         <source>Text saved: {path}</source>
         <translation>已保存文本：{path}</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1554"/>
         <source>VoiceTransor {version}
 Speech-to-Text &amp; Text Assistant
 
@@ -649,7 +782,7 @@ Features:
 - Export results (TXT / PDF)
 
 Supported Platforms: Windows, macOS</source>
-        <translation>VoiceTransor {version}
+        <translation type="vanished">VoiceTransor {version}
 语音转文字与文本助手
 
 功能：
@@ -661,7 +794,7 @@ Supported Platforms: Windows, macOS</source>
 支持平台：Windows、macOS</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1566"/>
+        <location filename="../../ui/main_window.py" line="1708"/>
         <source>VoiceTransor is an open-source project.
 
 For support, feedback, or collaboration:
@@ -675,98 +808,98 @@ For support, feedback, or collaboration:
 - GitHub：https://github.com/leonshen/VoiceTransor.git</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1568"/>
-        <location filename="../../ui/main_window.py" line="1644"/>
+        <location filename="../../ui/main_window.py" line="1710"/>
+        <location filename="../../ui/main_window.py" line="1786"/>
         <source>Contact</source>
         <translation>联系</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1639"/>
+        <location filename="../../ui/main_window.py" line="1781"/>
         <source>Run Text Operation</source>
         <translation>运行文本操作</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1640"/>
+        <location filename="../../ui/main_window.py" line="1782"/>
         <source>Export result as PDF…</source>
         <translation>导出结果为 PDF…</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1641"/>
+        <location filename="../../ui/main_window.py" line="1783"/>
         <source>Save Result as TXT…</source>
         <translation>将结果保存为 TXT…</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1648"/>
+        <location filename="../../ui/main_window.py" line="1790"/>
         <source>Show Prompt Dock</source>
         <translation>显示提示词面板</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1649"/>
+        <location filename="../../ui/main_window.py" line="1791"/>
         <source>Word Wrap (Transcript/Result)</source>
         <translation>自动换行（转录/结果）</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1653"/>
+        <location filename="../../ui/main_window.py" line="1795"/>
         <source>Reset Zoom</source>
         <translation>复位缩放</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1656"/>
+        <location filename="../../ui/main_window.py" line="1798"/>
         <source>System Default</source>
         <translation>系统默认</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1657"/>
+        <location filename="../../ui/main_window.py" line="1799"/>
         <source>English</source>
         <translation>英语</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1658"/>
+        <location filename="../../ui/main_window.py" line="1800"/>
         <source>简体中文</source>
         <translation>简体中文</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1660"/>
+        <location filename="../../ui/main_window.py" line="1802"/>
         <source>Theme</source>
         <translation>主题</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1661"/>
+        <location filename="../../ui/main_window.py" line="1803"/>
         <source>Dark</source>
         <translation>深色</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1662"/>
+        <location filename="../../ui/main_window.py" line="1804"/>
         <source>Light</source>
         <translation>浅色</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1666"/>
+        <location filename="../../ui/main_window.py" line="1808"/>
         <source>Transcript</source>
         <translation>转录</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1667"/>
+        <location filename="../../ui/main_window.py" line="1809"/>
         <source>Transcript will appear here.</source>
         <translation>转录内容将显示在此处。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1668"/>
+        <location filename="../../ui/main_window.py" line="1810"/>
         <source>Result</source>
         <translation>结果</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1669"/>
+        <location filename="../../ui/main_window.py" line="1811"/>
         <source>Result will appear here.</source>
         <translation>结果将显示在此处。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1683"/>
+        <location filename="../../ui/main_window.py" line="1825"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1687"/>
+        <location filename="../../ui/main_window.py" line="1829"/>
         <source>There is a running task. Cancel and exit?</source>
         <translation>仍有任务在运行。要取消并退出吗？</translation>
     </message>
@@ -779,7 +912,7 @@ For support, feedback, or collaboration:
         <translation type="vanished">摘要会在这里显示。</translation>
     </message>
     <message>
-        <location filename="../../ui/main_window.py" line="1673"/>
+        <location filename="../../ui/main_window.py" line="1815"/>
         <source>Audio Info</source>
         <translation>音频信息</translation>
     </message>

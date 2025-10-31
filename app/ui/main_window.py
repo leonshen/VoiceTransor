@@ -560,15 +560,26 @@ class VoiceTransorMainWindow(QMainWindow):
         self.lbl_info_duration = QLabel("-", host)
         self.lbl_info_size = QLabel("-", host)
 
-        form.addRow(self.tr("File:"), self.lbl_info_file)
-        form.addRow(self.tr("Path:"), self.lbl_info_path)
-        form.addRow(self.tr("Container:"), self.lbl_info_container)
-        form.addRow(self.tr("Codec:"), self.lbl_info_codec)
-        form.addRow(self.tr("Channels:"), self.lbl_info_channels)
-        form.addRow(self.tr("Sample rate:"), self.lbl_info_sr)
-        form.addRow(self.tr("Bitrate:"), self.lbl_info_bitrate)
-        form.addRow(self.tr("Duration:"), self.lbl_info_duration)
-        form.addRow(self.tr("Size:"), self.lbl_info_size)
+        # Save label references for retranslation
+        self.lbl_info_file_label = QLabel(self.tr("File:"), host)
+        self.lbl_info_path_label = QLabel(self.tr("Path:"), host)
+        self.lbl_info_container_label = QLabel(self.tr("Container:"), host)
+        self.lbl_info_codec_label = QLabel(self.tr("Codec:"), host)
+        self.lbl_info_channels_label = QLabel(self.tr("Channels:"), host)
+        self.lbl_info_sr_label = QLabel(self.tr("Sample rate:"), host)
+        self.lbl_info_bitrate_label = QLabel(self.tr("Bitrate:"), host)
+        self.lbl_info_duration_label = QLabel(self.tr("Duration:"), host)
+        self.lbl_info_size_label = QLabel(self.tr("Size:"), host)
+
+        form.addRow(self.lbl_info_file_label, self.lbl_info_file)
+        form.addRow(self.lbl_info_path_label, self.lbl_info_path)
+        form.addRow(self.lbl_info_container_label, self.lbl_info_container)
+        form.addRow(self.lbl_info_codec_label, self.lbl_info_codec)
+        form.addRow(self.lbl_info_channels_label, self.lbl_info_channels)
+        form.addRow(self.lbl_info_sr_label, self.lbl_info_sr)
+        form.addRow(self.lbl_info_bitrate_label, self.lbl_info_bitrate)
+        form.addRow(self.lbl_info_duration_label, self.lbl_info_duration)
+        form.addRow(self.lbl_info_size_label, self.lbl_info_size)
 
         host.setMinimumWidth(280)
         self.dock_info.setWidget(host)
@@ -594,7 +605,8 @@ class VoiceTransorMainWindow(QMainWindow):
 
         # Preset row
         row = QHBoxLayout()
-        row.addWidget(QLabel(self.tr("Preset:")))
+        self.lbl_prompt_preset = QLabel(self.tr("Preset:"))  # Save reference for retranslation
+        row.addWidget(self.lbl_prompt_preset)
         self.cmb_prompt_preset = QComboBox(host)
         row.addWidget(self.cmb_prompt_preset, 1)
         vbox.addLayout(row)
@@ -1813,6 +1825,24 @@ class VoiceTransorMainWindow(QMainWindow):
         # Docks titles
         # self.dock_wave.setWindowTitle(self.tr("Waveform"))
         self.dock_info.setWindowTitle(self.tr("Audio Info"))
+        self.dock_prompt.setWindowTitle(self.tr("Prompt"))
+
+        # Audio Info Dock labels
+        self.lbl_info_file_label.setText(self.tr("File:"))
+        self.lbl_info_path_label.setText(self.tr("Path:"))
+        self.lbl_info_container_label.setText(self.tr("Container:"))
+        self.lbl_info_codec_label.setText(self.tr("Codec:"))
+        self.lbl_info_channels_label.setText(self.tr("Channels:"))
+        self.lbl_info_sr_label.setText(self.tr("Sample rate:"))
+        self.lbl_info_bitrate_label.setText(self.tr("Bitrate:"))
+        self.lbl_info_duration_label.setText(self.tr("Duration:"))
+        self.lbl_info_size_label.setText(self.tr("Size:"))
+
+        # Prompt Dock
+        self.lbl_prompt_preset.setText(self.tr("Preset:"))
+        self.txt_prompt.setPlaceholderText(
+            self.tr("Describe what to do with the transcript (e.g., summarize, translate, extract action items)…")
+        )
 
     def closeEvent(self, event):
         # If no background work, close immediately.
