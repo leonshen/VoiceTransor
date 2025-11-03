@@ -1,10 +1,15 @@
 # VoiceTransor
 
+[![Release](https://img.shields.io/github/v/release/leonshen/VoiceTransor?include_prereleases)](https://github.com/leonshen/VoiceTransor/releases)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](https://github.com/leonshen/VoiceTransor)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+
 **基于 AI 的语音转文字工具，完全本地处理**
 
 VoiceTransor 是一款桌面应用程序，使用 OpenAI 的 Whisper 模型将音频转换为文字，并可选择使用 Ollama 进行 AI 文本处理。所有处理都在本地完成 - 您的数据不会离开您的电脑。
 
-[English README](./README.md)
+[English README](../../README.md)
 
 ## 功能特性
 

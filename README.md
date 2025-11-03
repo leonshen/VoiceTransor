@@ -1,5 +1,10 @@
 # VoiceTransor
 
+[![Release](https://img.shields.io/github/v/release/leonshen/VoiceTransor?include_prereleases)](https://github.com/leonshen/VoiceTransor/releases)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](https://github.com/leonshen/VoiceTransor)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+
 **AI-Powered Speech-to-Text with Local Processing**
 
 VoiceTransor is a desktop application that converts audio to text using OpenAI's Whisper model, with optional AI text processing powered by Ollama. Everything runs locally on your computer - your data never leaves your machine.
