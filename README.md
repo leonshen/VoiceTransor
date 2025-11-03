@@ -1,89 +1,139 @@
 # VoiceTransor
 
-**VoiceTransor** is an open-source speech-to-text and text assistant.  
-It provides a simple workflow to transcribe audio locally using Whisper, process text with AI, and export results in multiple formats.
+**AI-Powered Speech-to-Text with Local Processing**
 
----
+VoiceTransor is a desktop application that converts audio to text using OpenAI's Whisper model, with optional AI text processing powered by Ollama. Everything runs locally on your computer - your data never leaves your machine.
 
-## ✨ Features
+[中文版说明 (Chinese README)](./docs/zh-CN/README.md) | [Developer Guide](./docs/dev/README_DEV.md)
 
-- Import audio files
-- Local transcription with Whisper (supports resume from interruption)
-- AI-powered text processing
-- Export results as TXT / PDF
-- Cross-platform: Windows, macOS
+## Features
 
----
+- **Accurate Speech Recognition** - Powered by OpenAI Whisper
+- **GPU Acceleration** - Automatic CUDA/MPS detection for faster processing
+- **AI Text Processing** - Summarize, translate, or process transcripts with Ollama
+- **Multiple Export Formats** - Save as TXT or PDF
+- **Privacy First** - All processing happens locally
+- **Cross-Platform** - Windows, macOS, and Linux support
+- **Multiple Languages** - Supports 100 languages
 
-## 🚀 Installation
+## Quick Start
 
-### Prerequisites
+### 1. System Requirements
 
-- Python 3.10+
-- FFmpeg installed and available in PATH
-- Virtual environment (recommended)
+**Minimum:**
+- Windows 10 / macOS 10.15 / Linux
+- 8GB RAM
+- 5GB free disk space
 
-### Configure AI Text Processing
+**Recommended for GPU Acceleration:**
+- NVIDIA GPU (GTX 900 series or newer)
+- Driver version >= 525.60 (for CUDA support)
 
-VoiceTransor uses **Ollama** for local AI-powered text processing. This keeps your data completely private without sending it to the cloud.
+**Note:** GPU is optional - the app automatically detects your hardware and falls back to CPU if needed.
 
-**Quick Setup:**
+### 2. Installation
 
-1. **Windows:** Run `install_ollama.bat` in the project directory (automatic installation)
-2. **Manual installation:** Download from [ollama.com/download](https://ollama.com/download)
-3. **Start service:** Run `ollama serve` in a terminal
-4. **Download a model:** Run `ollama pull llama3.1:8b`
+**Windows:**
+1. Extract `VoiceTransor-Windows.zip`
+2. Run `VoiceTransor.exe`
 
-For detailed setup instructions, see [OLLAMA_SETUP_GUIDE.md](docs/OLLAMA_SETUP_GUIDE.md) ([中文版](docs/OLLAMA_SETUP_GUIDE_CN.md)).
+**Important:** You also need to install FFmpeg (see below).
 
-**Recommended Models:**
-- `llama3.1:8b` - English (default, ~4.7GB)
-- `qwen2.5:7b` - Balanced Chinese/English (~4.4GB)
-- `gemma2:9b` - High quality (~5.4GB)
+### 3. Install FFmpeg (Required)
 
-**System Requirements:**
-- **GPU mode:** NVIDIA GPU with 8GB+ VRAM (recommended)
-- **CPU mode:** 16GB+ RAM (slower but works)
+VoiceTransor needs FFmpeg for audio processing.
 
-### Setup
+**Windows:**
+- Download: https://www.gyan.dev/ffmpeg/builds/
+- Choose "ffmpeg-release-essentials.zip"
+- Extract and add to PATH ([How?](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/))
 
+**macOS:**
 ```bash
-git clone https://github.com/leonshen/VoiceTransor.git
-cd VoiceTransor
-pip install -r requirements.txt
+brew install ffmpeg
 ```
 
-### Windows GPU (CUDA) setup
-
-If you want Whisper to use an NVIDIA GPU on Windows:
-
-1. Uninstall any existing CPU-only PyTorch wheels inside your virtualenv:
-   ```bash
-   pip uninstall torch torchvision torchaudio -y
-   ```
-2. Install the matching CUDA wheels (examples below use CUDA 12.1; pick the build that matches your driver):
-   ```bash
-   pip install torch==2.3.0+cu121 torchvision==0.18.0+cu121 torchaudio==2.3.0+cu121 \
-       --index-url https://download.pytorch.org/whl/cu121
-   ```
-3. Verify CUDA is detected before launching VoiceTransor:
-   ```bash
-   python -c "import torch; print(torch.cuda.is_available(), torch.version.cuda)"
-   ```
-   The command should print `True` and a CUDA version string.
-
-## Run
-
-Make sure the virtual environment is activated
-
+**Linux:**
 ```bash
-python -m app.main
+sudo apt install ffmpeg  # Ubuntu/Debian
 ```
 
-## 📧 Contact
+### 4. First Use
 
-For support or collaboration: voicetransor@gmail.com
+1. Launch VoiceTransor
+2. Click "Import Audio" (supports WAV, MP3, M4A, FLAC, etc.)
+3. Click "Transcribe to Text"
+4. Choose settings:
+   - **Model**: `base` (recommended for most users)
+   - **Device**: `auto` (automatically uses GPU if available)
+   - **Language**: Auto-detect or select specific language
+5. Wait for transcription (first time downloads the model ~140MB)
+6. Export as TXT or process with AI
 
-## 📜 License
+## Optional: Install Ollama
+
+Ollama enables AI-powered text processing (summarize, translate, etc.) - completely offline.
+
+**Installation:**
+1. Download from: https://ollama.com/download
+2. Install and run `ollama serve`
+3. Pull a model:
+   ```bash
+   ollama pull llama3.1:8b  # English
+   ollama pull qwen2.5:7b   # Chinese/English
+   ```
+
+**Note:** Ollama works on both CPU and GPU - no special setup needed.
+
+## Performance
+
+**Transcription Speed (1 hour audio):**
+
+| Hardware | Time |
+|----------|------|
+| CPU (8-core) | ~30-60 min |
+| NVIDIA RTX 3060 | ~2-5 min |
+| Apple M1 Pro | ~3-6 min |
+
+**GPU Compatibility:**
+- ✅ **Single universal build** - works on both GPU and CPU systems
+- ✅ Automatic detection - no manual configuration needed
+- ✅ NVIDIA GPUs (GTX 900+, RTX series) - uses CUDA acceleration
+- ✅ Apple Silicon (M1/M2/M3) - uses Metal Performance Shaders
+- ✅ Graceful fallback to CPU if GPU unavailable
+- ℹ️ **No separate CPU/GPU versions** - one installer works for everyone
+
+## Documentation
+
+- [User Guide](./docs/USER_GUIDE.md) - Detailed usage instructions
+- [Installation Guide](./docs/INSTALLATION.md) - Step-by-step installation
+- [Build Instructions](./docs/dev/BUILD_INSTRUCTIONS.md) - For developers
+- [中文文档](./docs/zh-CN/) - Chinese documentation
+
+## Troubleshooting
+
+**"ffprobe not found"**
+- Install FFmpeg and ensure it's in your PATH
+
+**Slow transcription**
+- Use smaller model (`tiny` or `base`)
+- Check Device setting is `auto` or `cuda`
+- Ensure GPU drivers are up to date
+
+**"Ollama is not running"**
+- Open terminal and run `ollama serve`
+
+For more help, see [USER_GUIDE.md](./docs/USER_GUIDE.md#troubleshooting)
+
+## License
 
 MIT License. See [LICENSE](LICENSE) for details.
+
+## Support
+
+- GitHub Issues: https://github.com/leonshen/VoiceTransor/issues
+- Email: voicetransor@gmail.com
+
+---
+
+Made with ❤️ using [OpenAI Whisper](https://github.com/openai/whisper) and [Ollama](https://ollama.com)

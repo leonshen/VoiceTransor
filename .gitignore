@@ -1,35 +1,106 @@
+# =============================================================================
 # Python
+# =============================================================================
 __pycache__/
 *.py[cod]
 *.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
 
-# Environments
+# =============================================================================
+# Virtual Environments
+# =============================================================================
 venv/
 .venv/
 env/
+ENV/
 
-# Build artifacts
+# =============================================================================
+# Build Artifacts
+# =============================================================================
 build/
 dist/
-*.egg-info/
-*.spec
+*.spec.bak
 
-# IDE/Editor
+# =============================================================================
+# IDE and Editor
+# =============================================================================
 .idea/
 .vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
 
-# Local data cache
+# =============================================================================
+# Development and Testing
+# =============================================================================
+.claude/
+debug/
+test/
+*.log
+
+# =============================================================================
+# Data Directories
+# =============================================================================
 data/cache/
+data/test/
 
+# =============================================================================
+# Documentation
+# =============================================================================
+# Internal technical reports (not for end users)
+docs/internal/
 
-# added by sl 2005/08/29
-# test data
-/data/test/
+# Temporary doc files
+docs/**/*.docx
+docs/**/*.txt
+!docs/**/QUICK_START*.txt
 
-# dev docs
-/docs/*.docx
-/docs/*.txt
+# =============================================================================
+# Distribution and Packaging
+# =============================================================================
+# Distribution directories
+VoiceTransor-v*/
+installer_output/
 
-# macOS system files
+# Archive files
+*.zip
+*.7z
+*.tar.gz
+*.rar
+
+# Temporary distribution files
+QUICK_START.txt
+QUICK_START_zh_CN.txt
+VERSION.txt
+
+# =============================================================================
+# User Data
+# =============================================================================
+.voicetransor/
+
+# =============================================================================
+# Operating System
+# =============================================================================
+# macOS
 .DS_Store
-*/.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*

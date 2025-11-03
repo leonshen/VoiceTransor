@@ -71,7 +71,10 @@ def transcribe(
     try:
         import whisper  # type: ignore
     except Exception as e:
-        raise RuntimeError("openai-whisper is not installed. Run: pip install openai-whisper") from e
+        # Log the actual error for debugging
+        import traceback
+        error_details = traceback.format_exc()
+        raise RuntimeError(f"openai-whisper is not installed. Run: pip install openai-whisper\n\nActual error:\n{error_details}") from e
 
     models_dir = models_dir or default_models_dir()
     models_dir.mkdir(parents=True, exist_ok=True)

@@ -1288,6 +1288,7 @@ class VoiceTransorMainWindow(QMainWindow):
             return
 
         self._update_audio_info_fields(summary)
+
         self.setWindowTitle(f"VoiceTransor {self.version} — {p.name}")
         self.statusBar().showMessage(self.tr(f"Loaded: {p.name}").format(name=p.name), 3000)
 
@@ -1384,7 +1385,7 @@ class VoiceTransorMainWindow(QMainWindow):
                 gc.collect()
                 log.debug("GPU memory cleared before new transcription")
         except Exception as e:
-            log.warning(f"Failed to clear GPU memory: {e}")
+            log.debug(f"Failed to clear GPU memory: {e}")
 
         # AGGRESSIVE RESET: Clear text box completely
         try:
@@ -1392,7 +1393,7 @@ class VoiceTransorMainWindow(QMainWindow):
             self.txt_transcript.setPlainText("")
             log.debug("Text box cleared for new transcription")
         except Exception as e:
-            log.warning(f"Failed to clear text box: {e}")
+            log.debug(f"Failed to clear text box: {e}")
 
         QCoreApplication.processEvents()  # Process clear events
 

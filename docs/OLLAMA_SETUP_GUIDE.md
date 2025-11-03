@@ -32,7 +32,7 @@ VoiceTransor uses Ollama to provide local AI text processing, keeping your data 
 
 ### Method 1: Using Automatic Installation Script (Recommended)
 
-1. Double-click `install_ollama.bat` in the project root directory
+1. Run `scripts\setup\install_ollama.bat` from the project root directory
 2. The script will automatically:
    - Download the Ollama installer
    - Install Ollama

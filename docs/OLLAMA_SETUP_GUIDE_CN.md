@@ -32,7 +32,7 @@ VoiceTransor 使用 Ollama 提供本地 AI 文本处理功能，无需将您的�
 
 ### 方法1：使用自动安装脚本（推荐）
 
-1. 双击运行项目根目录下的 `install_ollama.bat`
+1. 从项目根目录运行 `scripts\setup\install_ollama.bat`
 2. 脚本会自动：
    - 下载 Ollama 安装程序
    - 安装 Ollama

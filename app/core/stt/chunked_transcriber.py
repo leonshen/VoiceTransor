@@ -45,7 +45,7 @@ class _ModelManager:
 
         # Try to safely unload existing model before switching
         if self._model is not None:
-            log.info(f"Switching model from {self._key} to {key}, attempting to unload...")
+            log.debug(f"Switching model from {self._key} to {key}, attempting to unload...")
             success = self._unload()
             if not success:
                 raise RuntimeError("To load the other model, please restart the App.")
@@ -79,7 +79,7 @@ class _ModelManager:
                     self._model.to("cpu")
                     log.debug("Model moved to CPU")
             except Exception as e:
-                log.warning(f"Failed to move model to CPU: {e}")
+                log.debug(f"Failed to move model to CPU: {e}")
 
             # Step 2: Delete model and clear reference
             model_ref = self._model
@@ -124,10 +124,10 @@ class _ModelManager:
                     # Step 5: Log memory stats for debugging
                     allocated = torch.cuda.memory_allocated() / 1024**2  # MB
                     reserved = torch.cuda.memory_reserved() / 1024**2    # MB
-                    log.info(f"CUDA memory after cleanup - Allocated: {allocated:.1f}MB, Reserved: {reserved:.1f}MB")
+                    log.debug(f"CUDA memory after cleanup - Allocated: {allocated:.1f}MB, Reserved: {reserved:.1f}MB")
 
                 except Exception as e:
-                    log.warning(f"CUDA cleanup error: {e}")
+                    log.debug(f"CUDA cleanup error: {e}")
 
             elif has_mps:
                 try:
@@ -139,15 +139,15 @@ class _ModelManager:
                     log.debug("MPS memory cleanup completed")
 
                     # MPS doesn't have detailed memory stats like CUDA
-                    log.info("MPS memory cache cleared")
+                    log.debug("MPS memory cache cleared")
 
                 except Exception as e:
-                    log.warning(f"MPS cleanup error: {e}")
+                    log.debug(f"MPS cleanup error: {e}")
 
             # Step 6: Short wait to let system complete cleanup
             time.sleep(0.5)
 
-            log.info("Model unloaded successfully")
+            log.debug("Model unloaded successfully")
             return True
 
         except Exception as e:
@@ -338,7 +338,10 @@ def transcribe_chunked(
     try:
         import whisper  # type: ignore
     except Exception as e:
-        raise RuntimeError("openai-whisper is not installed. Run: pip install openai-whisper") from e
+        # Log the actual error for debugging
+        import traceback
+        error_details = traceback.format_exc()
+        raise RuntimeError(f"openai-whisper is not installed. Run: pip install openai-whisper\n\nActual error:\n{error_details}") from e
 
     # load audio once (16k float32)
     _emit_safe(signals, "message", "Loading audio file...")
@@ -539,7 +542,7 @@ def transcribe_chunked(
         # Force garbage collection
         gc.collect()
     except Exception as e:
-        log.warning(f"Failed to cleanup resources: {e}")
+        log.debug(f"Failed to cleanup resources: {e}")
 
     return final_text
 
