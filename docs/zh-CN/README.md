@@ -39,8 +39,13 @@ VoiceTransor 是一款桌面应用程序，使用 OpenAI 的 Whisper 模型将�
 ### 2. 安装
 
 **Windows：**
-1. 解压 `VoiceTransor-Windows.zip`
-2. 运行 `VoiceTransor.exe`
+1. 从 [Releases](https://github.com/leonshen/VoiceTransor/releases) 下载 `VoiceTransor-v0.9.0-Windows-x64-Setup.exe`
+2. 运行安装程序并按照安装向导操作
+3. 从开始菜单或桌面快捷方式启动 VoiceTransor
+
+**macOS / Linux：**
+- *即将推出* - 目前仅提供 Windows 安装程序
+- 开发环境配置请参见 [开发者指南](../dev/README_DEV.md)
 
 **重要：** 您还需要安装 FFmpeg（见下文）。
 

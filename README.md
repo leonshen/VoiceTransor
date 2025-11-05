@@ -39,8 +39,13 @@ VoiceTransor is a desktop application that converts audio to text using OpenAI's
 ### 2. Installation
 
 **Windows:**
-1. Extract `VoiceTransor-Windows.zip`
-2. Run `VoiceTransor.exe`
+1. Download `VoiceTransor-v0.9.0-Windows-x64-Setup.exe` from [Releases](https://github.com/leonshen/VoiceTransor/releases)
+2. Run the installer and follow the setup wizard
+3. Launch VoiceTransor from the Start Menu or Desktop shortcut
+
+**macOS / Linux:**
+- *Coming soon* - Currently only Windows installer is available
+- For development setup, see [Developer Guide](./docs/dev/README_DEV.md)
 
 **Important:** You also need to install FFmpeg (see below).
 
